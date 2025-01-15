@@ -1,0 +1,16 @@
+[project]
+name = "qfield"
+version = "0.1.0"
+description = "Simulation and optimization of electric fields"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pygame>=2.6.1",
+]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.23.2",
+    "pytest>=8.3.4",
+    "ruff>=0.9.1",
+]
