@@ -1,4 +1,4 @@
-# field-simulation
+# qField
 
 This is a take on the traditional hockey game inspired by
 [electric-hockey](https://phet.colorado.edu/en/simulations/electric-hockey) where

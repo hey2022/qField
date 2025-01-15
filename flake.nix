@@ -1,5 +1,5 @@
 {
-  description = "Field Simulation flake";
+  description = "qField flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
