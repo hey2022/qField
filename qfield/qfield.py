@@ -38,9 +38,10 @@ class qfield:
 
     def update(self):
         """Update game state"""
-        force = self.charge.superposition(self.charges)
-        self.charge.apply_force(force)
-        self.charge.update(self.time_step)
+        for _ in range(4):
+            force = self.charge.superposition(self.charges)
+            self.charge.apply_force(force)
+            self.charge.update(self.time_step)
 
     def render_frame(self):
         """Render frame"""

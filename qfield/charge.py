@@ -12,6 +12,25 @@ class Charge:
 
     RADIUS = 10  # render purposes only
 
+    # fourth-order symplectic integrator
+    c = np.array(
+        [
+            1 / (2 * (2 - 2 ** (1 / 3.0))),
+            (1 - 2 ** (1 / 3)) / (2 * (2 - 2 ** (1 / 3))),
+            (1 - 2 ** (1 / 3)) / (2 * (2 - 2 ** (1 / 3))),
+            1 / (2 * (2 - 2 ** (1 / 3.0))),
+        ]
+    )
+    d = np.array(
+        [
+            1.0 / (2 - 2 ** (1 / 3)),
+            -(2 ** (1 / 3) / (2 - 2 ** (1 / 3))),
+            1.0 / (2 - 2 ** (1 / 3)),
+            0.0,
+        ]
+    )
+    pos = 0
+
     def __init__(self, x, y, charge, fixed, mass=1.0):
         self.color = RED if charge > 0 else BLUE
 
@@ -26,15 +45,26 @@ class Charge:
         """Newton's Second Law"""
         self.acceleration = force / self.mass
 
+    # def update(self, time_step):
+    #     """Update position"""
+    #     if self.fixed:
+    #         return
+
+    # self.velocity += self.acceleration * time_step
+    # self.position += self.velocity * time_step
+
+    # self.acceleration = np.array([0.0, 0.0])
+    #
+
     def update(self, time_step):
-        """Update position"""
+        """Update position using fourth order sympletic integration"""
         if self.fixed:
             return
 
-        self.velocity += self.acceleration * time_step
-        self.position += self.velocity * time_step
-
-        self.acceleration = np.array([0.0, 0.0])
+        self.position += self.velocity * time_step * self.c[self.pos]
+        self.velocity += self.acceleration * time_step * self.d[self.pos]
+        self.pos += 1
+        self.pos %= 4
 
     def superposition(self, charges):
         """Calculate superposition of electrostatic forces"""
