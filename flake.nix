@@ -47,9 +47,10 @@
           python-env
 
           basedpyright
-          uv
-          ruff
           git
+          pre-commit
+          ruff
+          uv
         ];
       };
     });
