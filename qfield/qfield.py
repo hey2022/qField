@@ -41,6 +41,9 @@ class qfield:
                 elif event.key == pygame.K_SPACE:
                     self.paused = not self.paused
 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            self.update()
 
     def update(self):
         """Update game state"""
