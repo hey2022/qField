@@ -17,6 +17,7 @@ class qfield:
             self.clock = pygame.time.Clock()
 
         self.running = True
+        self.paused = True
 
         self.charge = Charge(self.width // 2, self.height // 2, 1, False)
         self.charges = []
@@ -37,6 +38,8 @@ class qfield:
                     self.running = False
                 elif event.key == pygame.K_r:
                     self.restart()
+                elif event.key == pygame.K_SPACE:
+                    self.paused = not self.paused
 
 
     def update(self):
@@ -61,7 +64,8 @@ class qfield:
         while self.running:
             if self.interactive:
                 self.input()
-            self.update()
+            if not self.paused:
+                self.update()
             if self.interactive:
                 self.render_frame()
                 self.clock.tick(120)
@@ -71,6 +75,7 @@ class qfield:
     def restart(self):
         self.charge = Charge(self.width // 2, self.height // 2, 1, False)
         self.charges = []
+        self.paused = True
 
     def exit(self):
         pygame.quit()
