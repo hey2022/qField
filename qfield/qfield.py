@@ -34,7 +34,7 @@ class qfield:
                 elif event.button == 3:
                     self.charges.append(Charge(*pygame.mouse.get_pos(), -1, True))
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                     self.running = False
                 elif event.key == pygame.K_r:
                     self.restart()
