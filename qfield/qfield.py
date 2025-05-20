@@ -22,6 +22,7 @@ class qfield:
         self.charge = Charge(self.width // 2, self.height // 2, 1, False)
         self.charges = []
         self.time_step = 3e-8
+        self.fps = 120
 
     def input(self):
         """Handle all input events"""
@@ -71,7 +72,7 @@ class qfield:
                 self.update()
             if self.interactive:
                 self.render_frame()
-                self.clock.tick(120)
+                self.clock.tick(self.fps)
         if self.interactive:
             exit()
 
