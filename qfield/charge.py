@@ -8,9 +8,9 @@ class Charge:
     K = 8.988e9  # Nm^2/C^2
     PROTON_MASS = 1.673e-27  # kg
     SCALE = 1e-9  # pixel to nm
-    MIN_RADIUS = 10 * SCALE
-
     RADIUS = 10  # render purposes only
+
+    HEIGHT = 9e-9  # the height difference between fixed and free particles
 
     # fourth-order symplectic integrator
     c = np.array(
@@ -61,8 +61,8 @@ class Charge:
         if self.fixed:
             return
 
-        self.position += self.velocity * time_step * self.c[self.pos]
         self.velocity += self.acceleration * time_step * self.d[self.pos]
+        self.position += self.velocity * time_step * self.c[self.pos]
         self.pos += 1
         self.pos %= 4
 
@@ -76,12 +76,12 @@ class Charge:
     def electrostatic_force(self, other):
         """Calculate electrostatic force with Coulumb's Law"""
         r = (self.position - other.position) * self.SCALE
-        r_norm = np.linalg.norm(r)
-        if r_norm < self.MIN_RADIUS:
-            print(r_norm)
-            r *= self.MIN_RADIUS / r_norm
         r_magnitude = np.linalg.norm(r)
-        force_magnitude = self.K * (self.charge * other.charge) / (r_magnitude**2)
+        force_magnitude = (
+            self.K
+            * (self.charge * other.charge * r_magnitude)
+            / (r_magnitude**2 + self.HEIGHT**2) ** (3 / 2)
+        )
         force = force_magnitude * (r / r_magnitude)
         return force
 
