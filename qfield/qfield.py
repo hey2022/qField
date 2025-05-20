@@ -35,6 +35,9 @@ class qfield:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+                elif event.key == pygame.K_r:
+                    self.restart()
+
 
     def update(self):
         """Update game state"""
@@ -64,6 +67,10 @@ class qfield:
                 self.clock.tick(120)
         if self.interactive:
             exit()
+
+    def restart(self):
+        self.charge = Charge(self.width // 2, self.height // 2, 1, False)
+        self.charges = []
 
     def exit(self):
         pygame.quit()
