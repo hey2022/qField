@@ -26,11 +26,11 @@ class qfield:
 
     def input(self):
         """Handle all input events"""
+        world_pos = self.camera + pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                world_pos = self.camera + pygame.mouse.get_pos()
                 if event.button == 1:
                     self.charges.append(Charge(*world_pos, 1, True))
                 elif event.button == 2:
@@ -59,6 +59,11 @@ class qfield:
             self.camera += np.array([0, 1]) * self.CAMERA_SPEED
         if keys[pygame.K_d]:
             self.camera += np.array([1, 0]) * self.CAMERA_SPEED
+        if keys[pygame.K_LSHIFT]:
+            if pygame.mouse.get_pressed()[0]:
+                self.charges.append(Charge(*world_pos, 1, True))
+            if pygame.mouse.get_pressed()[2]:
+                self.charges.append(Charge(*world_pos, -1, True))
 
     def update(self):
         """Update game state"""
