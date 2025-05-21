@@ -77,6 +77,8 @@ class Charge:
         """Calculate electrostatic force with Coulomb's Law"""
         r = (self.position - other.position) * self.SCALE
         r_magnitude = np.linalg.norm(r)
+        if r_magnitude == 0:
+            return 0
         force_magnitude = (
             self.K
             * (self.charge * other.charge * r_magnitude)
