@@ -95,12 +95,9 @@ class Charge:
         )
 
     def render_velocity(self, screen):
-        end = self.position + self.velocity / self.SCALE / 1e15
+        end = self.position + self.velocity / self.SCALE * 1e-15
         draw.draw_arrow(screen, self.position, end, "blue")
 
     def render_force(self, screen):
-        end = (
-            self.position
-            + self.force / self.SCALE * screen.get_size() * screen.get_size()
-        )
+        end = self.position + self.force / self.SCALE * 1e6
         draw.draw_arrow(screen, self.position, end, "red")

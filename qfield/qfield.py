@@ -10,7 +10,7 @@ class qfield:
         self.interactive = interactive
         if self.interactive:
             pygame.init()
-            self.screen = pygame.display.set_mode((width, height))
+            self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
             pygame.display.set_caption("Electric field simulation")
             self.clock = pygame.time.Clock()
 
