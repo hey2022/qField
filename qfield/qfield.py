@@ -10,8 +10,6 @@ class qfield:
         self.interactive = interactive
         if self.interactive:
             pygame.init()
-            self.width = width
-            self.height = height
             self.screen = pygame.display.set_mode((width, height))
             pygame.display.set_caption("Electric field simulation")
             self.clock = pygame.time.Clock()
@@ -19,7 +17,7 @@ class qfield:
         self.running = True
         self.paused = True
 
-        self.charge = Charge(self.width // 2, self.height // 2, 1, False)
+        self.charge = Charge(width // 2, height // 2, 1, False)
         self.charges = []
         self.time_step = 3e-8
         self.fps = 120
@@ -83,7 +81,8 @@ class qfield:
             exit()
 
     def reset(self):
-        self.charge = Charge(self.width // 2, self.height // 2, 1, False)
+        width, height = self.screen.get_size()
+        self.charge = Charge(width // 2, height // 2, 1, False)
         self.paused = True
 
     def clear(self):
