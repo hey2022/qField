@@ -68,24 +68,32 @@ class Charge:
 
     def superposition(self, charges):
         """Calculate superposition of electrostatic forces"""
-        total_force = np.array([0.0, 0.0])
-        for charge in charges:
-            total_force += self.electrostatic_force(charge)
-        return total_force
+        if not charges:
+            return np.array([0.0, 0.0])
 
-    def electrostatic_force(self, other):
-        """Calculate electrostatic force with Coulomb's Law"""
-        r = (self.position - other.position) * self.SCALE
-        r_magnitude = np.linalg.norm(r)
-        if r_magnitude == 0:
-            return 0
-        force_magnitude = (
-            self.K
-            * (self.charge * other.charge * r_magnitude)
-            / (r_magnitude**2 + self.HEIGHT**2) ** (3 / 2)
-        )
-        force = force_magnitude * (r / r_magnitude)
-        return force
+        positions = np.array([charge.position for charge in charges])
+        q = np.array([charge.charge for charge in charges])
+
+        r_vectors = (self.position - positions) * self.SCALE
+        r_squared = np.sum(r_vectors**2, axis=1)
+        r_magnitudes = np.sqrt(r_squared)
+
+        non_zero = r_magnitudes > 0
+        forces = np.zeros((len(charges), 2))
+
+        if np.any(non_zero):
+            force_magnitudes = (
+                self.K
+                * (self.charge * q[non_zero] * r_magnitudes[non_zero])
+                / (r_squared[non_zero] + self.HEIGHT**2) ** (3 / 2)
+            )
+
+            unit_vectors = r_vectors[non_zero] / r_magnitudes[non_zero].reshape(-1, 1)
+            forces[non_zero] = force_magnitudes.reshape(-1, 1) * unit_vectors
+
+        total_force = np.sum(forces, axis=0)
+
+        return total_force
 
     def render(self, surface, camera_pos=None, screen_size=None):
         """Render charge if it's in view of the camera"""
