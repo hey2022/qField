@@ -5,12 +5,14 @@ description = "Simulation and optimization of electric fields"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "numpy>=2.2.1",
     "pygame>=2.6.1",
 ]
 
 [dependency-groups]
 dev = [
     "basedpyright>=1.23.2",
+    "pre-commit>=4.2.0",
     "pytest>=8.3.4",
     "ruff>=0.9.1",
 ]
