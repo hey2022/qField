@@ -50,7 +50,7 @@ class qfield:
 
     def update(self):
         """Update game state"""
-        for _ in range(4):
+        for _ in range(8):
             force = self.charge.superposition(self.charges)
             self.charge.apply_force(force)
             self.charge.update(self.time_step)
