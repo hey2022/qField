@@ -39,6 +39,8 @@ class qfield:
                     self.running = False
                 elif event.key == pygame.K_r:
                     self.restart()
+                elif event.key == pygame.K_c:
+                    self.clear()
                 elif event.key == pygame.K_SPACE:
                     self.paused = not self.paused
 
@@ -78,8 +80,11 @@ class qfield:
 
     def restart(self):
         self.charge = Charge(self.width // 2, self.height // 2, 1, False)
-        self.charges = []
         self.paused = True
+
+    def clear(self):
+        self.charges = []
+        self.restart()
 
     def exit(self):
         pygame.quit()
