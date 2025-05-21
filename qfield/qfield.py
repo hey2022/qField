@@ -1,6 +1,7 @@
 import sys
 
 import pygame
+import numpy as np
 from charge import Charge
 from colors import WHITE
 
@@ -32,6 +33,11 @@ class qfield:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.charges.append(Charge(*pygame.mouse.get_pos(), 1, True))
+                elif event.button == 2:
+                    self.charge.velocity = np.array([0.0, 0.0])
+                    self.charge.position = np.array(
+                        [*map(float, pygame.mouse.get_pos())]
+                    )
                 elif event.button == 3:
                     self.charges.append(Charge(*pygame.mouse.get_pos(), -1, True))
             elif event.type == pygame.KEYDOWN:
