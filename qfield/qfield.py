@@ -1,7 +1,6 @@
 import sys
 
 import pygame
-import numpy as np
 from charge import Charge
 from colors import WHITE
 
@@ -34,17 +33,14 @@ class qfield:
                 if event.button == 1:
                     self.charges.append(Charge(*pygame.mouse.get_pos(), 1, True))
                 elif event.button == 2:
-                    self.charge.velocity = np.array([0.0, 0.0])
-                    self.charge.position = np.array(
-                        [*map(float, pygame.mouse.get_pos())]
-                    )
+                    self.charge.reset(*map(float, pygame.mouse.get_pos()))
                 elif event.button == 3:
                     self.charges.append(Charge(*pygame.mouse.get_pos(), -1, True))
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                     self.running = False
                 elif event.key == pygame.K_r:
-                    self.restart()
+                    self.reset()
                 elif event.key == pygame.K_c:
                     self.clear()
                 elif event.key == pygame.K_SPACE:
@@ -86,13 +82,13 @@ class qfield:
         if self.interactive:
             exit()
 
-    def restart(self):
+    def reset(self):
         self.charge = Charge(self.width // 2, self.height // 2, 1, False)
         self.paused = True
 
     def clear(self):
         self.charges = []
-        self.restart()
+        self.reset()
 
     def exit(self):
         pygame.quit()

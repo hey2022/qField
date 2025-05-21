@@ -44,6 +44,9 @@ class Charge:
         self.charge = charge * self.ELEMENTAL_CHARGE
         self.mass = mass * self.PROTON_MASS
         self.fixed = fixed
+        self.reset(x, y)
+
+    def reset(self, x, y):
         self.position = np.array([float(x), float(y)])
         self.velocity = np.array([0.0, 0.0])
         self.acceleration = np.array([0.0, 0.0])
