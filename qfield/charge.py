@@ -87,8 +87,19 @@ class Charge:
         force = force_magnitude * (r / r_magnitude)
         return force
 
-    def render(self, surface):
-        """Render charge"""
+    def render(self, surface, camera_pos=None, screen_size=None):
+        """Render charge if it's in view of the camera"""
+        if camera_pos is not None and screen_size is not None:
+            if not (
+                camera_pos[0] - self.RADIUS
+                <= self.position[0]
+                <= camera_pos[0] + screen_size[0] + self.RADIUS
+                and camera_pos[1] - self.RADIUS
+                <= self.position[1]
+                <= camera_pos[1] + screen_size[1] + self.RADIUS
+            ):
+                return
+
         pygame.draw.circle(
             surface,
             self.color,

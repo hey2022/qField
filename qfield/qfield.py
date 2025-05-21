@@ -72,7 +72,7 @@ class qfield:
         pygame.draw.rect(self.world, WHITE, (*self.camera, *self.screen.get_size()))
 
         for charge in self.charges:
-            charge.render(self.world)
+            charge.render(self.world, self.camera, self.screen.get_size())
         self.charge.render_velocity(self.world)
         self.charge.render_force(self.world)
         self.charge.render(self.world)
