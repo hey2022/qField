@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+import draw
 from colors import RED, BLUE
 
 
@@ -45,9 +46,12 @@ class Charge:
         self.fixed = fixed
         self.position = np.array([float(x), float(y)])
         self.velocity = np.array([0.0, 0.0])
+        self.acceleration = np.array([0.0, 0.0])
+        self.force = np.array([0.0, 0.0])
 
     def apply_force(self, force):
         """Newton's Second Law"""
+        self.force = force
         self.acceleration = force / self.mass
 
     def update(self, time_step):
@@ -86,3 +90,14 @@ class Charge:
             (int(self.position[0]), int(self.position[1])),
             self.RADIUS,
         )
+
+    def render_velocity(self, screen):
+        end = self.position + self.velocity / self.SCALE / 1e15
+        draw.draw_arrow(screen, self.position, end, "blue")
+
+    def render_force(self, screen):
+        end = (
+            self.position
+            + self.force / self.SCALE * screen.get_size() * screen.get_size()
+        )
+        draw.draw_arrow(screen, self.position, end, "red")

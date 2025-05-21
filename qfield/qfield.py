@@ -61,6 +61,8 @@ class qfield:
 
         for charge in self.charges:
             charge.render(self.screen)
+        self.charge.render_velocity(self.screen)
+        self.charge.render_force(self.screen)
         self.charge.render(self.screen)
 
         pygame.display.flip()
