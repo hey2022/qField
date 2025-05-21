@@ -87,19 +87,19 @@ class Charge:
         force = force_magnitude * (r / r_magnitude)
         return force
 
-    def render(self, screen):
+    def render(self, surface):
         """Render charge"""
         pygame.draw.circle(
-            screen,
+            surface,
             self.color,
             (int(self.position[0]), int(self.position[1])),
             self.RADIUS,
         )
 
-    def render_velocity(self, screen):
+    def render_velocity(self, surfce):
         end = self.position + self.velocity / self.SCALE * 1e-15
-        draw.draw_arrow(screen, self.position, end, "blue")
+        draw.draw_arrow(surfce, self.position, end, "blue")
 
-    def render_force(self, screen):
+    def render_force(self, surface):
         end = self.position + self.force / self.SCALE * 1e6
-        draw.draw_arrow(screen, self.position, end, "red")
+        draw.draw_arrow(surface, self.position, end, "red")
