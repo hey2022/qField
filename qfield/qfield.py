@@ -1,6 +1,7 @@
 import sys
 
 import pygame
+import numpy as np
 from charge import Charge
 from colors import WHITE
 
@@ -11,16 +12,17 @@ class qfield:
         if self.interactive:
             pygame.init()
             self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+            self.world = pygame.Surface((10000, 10000))
             pygame.display.set_caption("Electric field simulation")
             self.clock = pygame.time.Clock()
 
         self.running = True
-        self.paused = True
 
-        self.charge = Charge(width // 2, height // 2, 1, False)
+        self.CAMERA_SPEED = 5
         self.charges = []
         self.time_step = 3e-8
         self.fps = 120
+        self.reset()
 
     def input(self):
         """Handle all input events"""
@@ -28,12 +30,13 @@ class qfield:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                world_pos = self.camera + pygame.mouse.get_pos()
                 if event.button == 1:
-                    self.charges.append(Charge(*pygame.mouse.get_pos(), 1, True))
+                    self.charges.append(Charge(*world_pos, 1, True))
                 elif event.button == 2:
-                    self.charge.reset(*map(float, pygame.mouse.get_pos()))
+                    self.charge.reset(*world_pos)
                 elif event.button == 3:
-                    self.charges.append(Charge(*pygame.mouse.get_pos(), -1, True))
+                    self.charges.append(Charge(*world_pos, -1, True))
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                     self.running = False
@@ -48,6 +51,15 @@ class qfield:
         if keys[pygame.K_RIGHT]:
             self.update()
 
+        if keys[pygame.K_w]:
+            self.camera += np.array([0, -1]) * self.CAMERA_SPEED
+        if keys[pygame.K_a]:
+            self.camera += np.array([-1, 0]) * self.CAMERA_SPEED
+        if keys[pygame.K_s]:
+            self.camera += np.array([0, 1]) * self.CAMERA_SPEED
+        if keys[pygame.K_d]:
+            self.camera += np.array([1, 0]) * self.CAMERA_SPEED
+
     def update(self):
         """Update game state"""
         for _ in range(8):
@@ -57,14 +69,15 @@ class qfield:
 
     def render_frame(self):
         """Render frame"""
-        self.screen.fill(WHITE)
+        pygame.draw.rect(self.world, WHITE, (*self.camera, *self.screen.get_size()))
 
         for charge in self.charges:
-            charge.render(self.screen)
-        self.charge.render_velocity(self.screen)
-        self.charge.render_force(self.screen)
-        self.charge.render(self.screen)
+            charge.render(self.world)
+        self.charge.render_velocity(self.world)
+        self.charge.render_force(self.world)
+        self.charge.render(self.world)
 
+        self.screen.blit(self.world, (0, 0), (*self.camera, *self.screen.get_size()))
         pygame.display.flip()
 
     def run(self):
@@ -81,8 +94,10 @@ class qfield:
             exit()
 
     def reset(self):
-        width, height = self.screen.get_size()
-        self.charge = Charge(width // 2, height // 2, 1, False)
+        self.charge = Charge(*np.array(self.world.get_size()) // 2, 1, False)
+        self.camera = (
+            np.array(self.world.get_size()) // 2 - np.array(self.screen.get_size()) // 2
+        )
         self.paused = True
 
     def clear(self):
