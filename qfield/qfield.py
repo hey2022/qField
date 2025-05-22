@@ -20,6 +20,7 @@ class qfield:
         self.running = True
 
         self.CAMERA_SPEED = 5
+        self.SHIFT_CAMERA_SPEED_MULTIPLIER = 2
         self.charges = []
         self.time_step = 3e-8
         self.fps = 120
@@ -52,19 +53,25 @@ class qfield:
         if keys[pygame.K_RIGHT]:
             self.update()
 
+        camera_velocity = np.array([0, 0])
+        camera_speed = self.CAMERA_SPEED
         if keys[pygame.K_w]:
-            self.camera += np.array([0, -1]) * self.CAMERA_SPEED
+            camera_velocity += np.array([0, -1])
         if keys[pygame.K_a]:
-            self.camera += np.array([-1, 0]) * self.CAMERA_SPEED
+            camera_velocity += np.array([-1, 0])
         if keys[pygame.K_s]:
-            self.camera += np.array([0, 1]) * self.CAMERA_SPEED
+            camera_velocity += np.array([0, 1])
         if keys[pygame.K_d]:
-            self.camera += np.array([1, 0]) * self.CAMERA_SPEED
+            camera_velocity += np.array([1, 0])
+
         if keys[pygame.K_LSHIFT]:
+            camera_speed *= self.SHIFT_CAMERA_SPEED_MULTIPLIER
             if pygame.mouse.get_pressed()[0]:
                 self.charges.append(Charge(*world_pos, 1, True))
             if pygame.mouse.get_pressed()[2]:
                 self.charges.append(Charge(*world_pos, -1, True))
+
+        self.camera += camera_velocity * camera_speed
 
     def update(self):
         """Update game state"""
