@@ -95,30 +95,30 @@ class Charge:
 
         return total_force
 
-    def render(self, surface, camera_pos=None, screen_size=None):
+    def render(self, surface, camera=(0, 0)):
         """Render charge if it's in view of the camera"""
-        if camera_pos is not None and screen_size is not None:
-            if not (
-                camera_pos[0] - self.RADIUS
-                <= self.position[0]
-                <= camera_pos[0] + screen_size[0] + self.RADIUS
-                and camera_pos[1] - self.RADIUS
-                <= self.position[1]
-                <= camera_pos[1] + screen_size[1] + self.RADIUS
-            ):
-                return
+        surface_size = surface.get_size()
+        if not (
+            camera[0] - self.RADIUS
+            <= self.position[0]
+            <= camera[0] + surface_size[0] + self.RADIUS
+            and camera[1] - self.RADIUS
+            <= self.position[1]
+            <= camera[1] + surface_size[1] + self.RADIUS
+        ):
+            return
 
         pygame.draw.circle(
             surface,
             self.color,
-            (int(self.position[0]), int(self.position[1])),
+            (self.position - camera),
             self.RADIUS,
         )
 
-    def render_velocity(self, surfce):
+    def render_velocity(self, surface, camera=(0, 0)):
         end = self.position + self.velocity / self.SCALE * 1e-15
-        draw.draw_arrow(surfce, self.position, end, "blue")
+        draw.draw_arrow(surface, self.position - camera, end - camera, "blue")
 
-    def render_force(self, surface):
+    def render_force(self, surface, camera=(0, 0)):
         end = self.position + self.force / self.SCALE * 1e6
-        draw.draw_arrow(surface, self.position, end, "red")
+        draw.draw_arrow(surface, self.position - camera, end - camera, "red")

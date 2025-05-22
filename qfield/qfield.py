@@ -12,7 +12,6 @@ class qfield:
         if self.interactive:
             pygame.init()
             self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-            self.world = pygame.Surface((10000, 10000))
             pygame.display.set_caption("Electric field simulation")
             self.clock = pygame.time.Clock()
             pygame.font.init()
@@ -77,17 +76,15 @@ class qfield:
     def render_frame(self):
         """Render frame"""
         self.screen.fill(WHITE)
-        pygame.draw.rect(self.world, WHITE, (*self.camera, *self.screen.get_size()))
 
         for charge in self.charges:
-            charge.render(self.world, self.camera, self.screen.get_size())
-        self.charge.render_velocity(self.world)
-        self.charge.render_force(self.world)
-        self.charge.render(self.world)
-
-        self.screen.blit(self.world, (0, 0), (*self.camera, *self.screen.get_size()))
+            charge.render(self.screen, self.camera)
+        self.charge.render_velocity(self.screen, self.camera)
+        self.charge.render_force(self.screen, self.camera)
+        self.charge.render(self.screen, self.camera)
 
         self.render_fps(self.screen)
+
         pygame.display.flip()
 
     def render_fps(self, screen, color="black"):
@@ -112,10 +109,8 @@ class qfield:
             exit()
 
     def reset(self):
-        self.charge = Charge(*np.array(self.world.get_size()) // 2, 1, False)
-        self.camera = (
-            np.array(self.world.get_size()) // 2 - np.array(self.screen.get_size()) // 2
-        )
+        self.charge = Charge(0, 0, 1, False)
+        self.camera = -np.array(self.screen.get_size()) // 2
         self.paused = True
 
     def clear(self):
