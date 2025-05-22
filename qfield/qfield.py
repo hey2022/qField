@@ -15,6 +15,8 @@ class qfield:
             self.world = pygame.Surface((10000, 10000))
             pygame.display.set_caption("Electric field simulation")
             self.clock = pygame.time.Clock()
+            pygame.font.init()
+            self.font = pygame.font.Font(None, 36)
 
         self.running = True
 
@@ -74,6 +76,7 @@ class qfield:
 
     def render_frame(self):
         """Render frame"""
+        self.screen.fill(WHITE)
         pygame.draw.rect(self.world, WHITE, (*self.camera, *self.screen.get_size()))
 
         for charge in self.charges:
@@ -83,7 +86,17 @@ class qfield:
         self.charge.render(self.world)
 
         self.screen.blit(self.world, (0, 0), (*self.camera, *self.screen.get_size()))
+
+        self.render_fps(self.screen)
         pygame.display.flip()
+
+    def render_fps(self, screen, color="black"):
+        """Display the current FPS in the top left corner of the screen"""
+        fps = int(self.clock.get_fps())
+        fps_text = f"FPS: {fps}"
+        fps_surface = self.font.render(fps_text, True, color)
+
+        screen.blit(fps_surface, (10, 10))
 
     def run(self):
         """Main loop"""
