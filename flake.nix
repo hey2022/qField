@@ -19,6 +19,12 @@
           pre-commit
           git
         ];
+
+        shellHook = ''
+          if [ ! -f .git/hooks/pre-commit ]; then
+            pre-commit install
+          fi
+        '';
       };
     });
 }
