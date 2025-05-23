@@ -76,8 +76,7 @@ class qfield:
     def update(self):
         """Update game state"""
         for _ in range(8):
-            force = self.charge.superposition(self.charges)
-            self.charge.apply_force(force)
+            self.charge.update_force(self.charges)
             self.charge.update(self.time_step)
 
     def render_frame(self):
@@ -109,6 +108,8 @@ class qfield:
                 self.input()
             if not self.paused:
                 self.update()
+            else:
+                self.charge.update_force(self.charges)
             if self.interactive:
                 self.render_frame()
                 self.clock.tick(self.fps)
