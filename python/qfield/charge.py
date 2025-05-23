@@ -52,6 +52,11 @@ class Charge:
         self.acceleration = np.array([0.0, 0.0])
         self.force = np.array([0.0, 0.0])
 
+    def update_force(self, charges):
+        """Update force of charge based on superposition of charges"""
+        force = self.superposition(charges)
+        self.apply_force(force)
+
     def apply_force(self, force):
         """Newton's Second Law"""
         self.force = force
