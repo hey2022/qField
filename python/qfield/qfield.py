@@ -21,6 +21,7 @@ class qfield:
 
         self.CAMERA_SPEED = 5
         self.SHIFT_CAMERA_SPEED_MULTIPLIER = 2
+        self.camera_follow = False
         self.charges = []
         self.time_step = 3e-8
         self.fps = 120
@@ -46,6 +47,8 @@ class qfield:
                     self.reset()
                 elif event.key == pygame.K_c:
                     self.clear()
+                elif event.key == pygame.K_f:
+                    self.camera_follow = not self.camera_follow
                 elif event.key == pygame.K_SPACE:
                     self.paused = not self.paused
 
@@ -83,6 +86,9 @@ class qfield:
         """Render frame"""
         self.screen.fill(WHITE)
 
+        if self.camera_follow and not self.paused:
+            self.center_camera(self.charge)
+
         for charge in self.charges:
             charge.render(self.screen, self.camera)
         self.charge.render_velocity(self.screen, self.camera)
@@ -101,6 +107,10 @@ class qfield:
 
         screen.blit(fps_surface, (10, 10))
 
+    def center_camera(self, charge):
+        """Center the camera onto the charge"""
+        self.camera = charge.position - np.array(self.screen.get_size()) / 2
+
     def run(self):
         """Main loop"""
         while self.running:
@@ -118,7 +128,7 @@ class qfield:
 
     def reset(self):
         self.charge = Charge(0, 0, 1, False)
-        self.camera = -np.array(self.screen.get_size()) // 2
+        self.center_camera(self.charge)
         self.paused = True
 
     def clear(self):
