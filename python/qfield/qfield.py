@@ -35,11 +35,12 @@ class qfield:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    self.charges.append(Charge(*world_pos, 1, True))
+                    self.add_charge(*world_pos, 1, True)
                 elif event.button == 2:
                     self.charge.reset(*world_pos)
+                    self.charge.update_force(self.charges)
                 elif event.button == 3:
-                    self.charges.append(Charge(*world_pos, -1, True))
+                    self.add_charge(*world_pos, -1, True)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                     self.running = False
@@ -70,9 +71,9 @@ class qfield:
         if keys[pygame.K_LSHIFT]:
             camera_speed *= self.SHIFT_CAMERA_SPEED_MULTIPLIER
             if pygame.mouse.get_pressed()[0]:
-                self.charges.append(Charge(*world_pos, 1, True))
+                self.add_charge(*world_pos, 1, True)
             if pygame.mouse.get_pressed()[2]:
-                self.charges.append(Charge(*world_pos, -1, True))
+                self.add_charge(*world_pos, -1, True)
 
         self.camera += camera_velocity * camera_speed
 
@@ -81,6 +82,12 @@ class qfield:
         for _ in range(8):
             self.charge.update_force(self.charges)
             self.charge.update(self.time_step)
+
+    def add_charge(self, x, y, charge, fixed):
+        """Add a new charge to the simulation and update force for moving charge"""
+        self.charges.append(Charge(x, y, charge, fixed))
+        if self.paused:
+            self.charge.update_force(self.charges)
 
     def render_frame(self):
         """Render frame"""
@@ -118,8 +125,6 @@ class qfield:
                 self.input()
             if not self.paused:
                 self.update()
-            else:
-                self.charge.update_force(self.charges)
             if self.interactive:
                 self.render_frame()
                 self.clock.tick(self.fps)
