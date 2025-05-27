@@ -68,6 +68,10 @@ subprojects {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
   }
+
+  dependencies {
+    implementation 'org.nd4j:nd4j-native-platform:1.0.0-M2.1'
+  }
 }
 
 eclipse.project.name = 'qField' + '-parent'
