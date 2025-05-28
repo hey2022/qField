@@ -34,10 +34,11 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
+            git
+            google-java-format
             gradle
             jdk
             jdt-language-server
-            git
           ];
 
           shellHook = let
