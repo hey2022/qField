@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main implements ApplicationListener {
+public class Main implements ApplicationListener, InputProcessor {
 
   static final float MIN_WORLD_WIDTH = 800;
   static final float MIN_WORLD_HEIGHT = 800;
@@ -56,6 +57,8 @@ public class Main implements ApplicationListener {
 
     charge = new Charge(0, 0, 1, false, 1);
     charges = new Array<Charge>();
+
+    Gdx.input.setInputProcessor(this);
   }
 
   @Override
@@ -113,27 +116,18 @@ public class Main implements ApplicationListener {
 
   private void input() {
     float displacement = (float) (camSpeed * Gdx.graphics.getDeltaTime());
-    if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
       camera.translate(-displacement, 0, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
       camera.translate(displacement, 0, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
       camera.translate(0, displacement, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
-
-    if (Gdx.input.isTouched()) {
-      touchPos.set(Gdx.input.getX(), Gdx.input.getY());
-      viewport.unproject(touchPos);
-      charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
-      System.out.println(touchPos);
-    }
-
-    if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {}
   }
 
   @Override
@@ -149,5 +143,61 @@ public class Main implements ApplicationListener {
   @Override
   public void dispose() {
     // Destroy application's resources here.
+  }
+
+  @Override
+  public boolean keyDown(int keycode) {
+    switch (keycode) {
+      case Input.Keys.SPACE:
+        break;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean keyUp(int keycode) {
+    return false;
+  }
+
+  @Override
+  public boolean keyTyped(char character) {
+    return false;
+  }
+
+  @Override
+  public boolean touchDown(int x, int y, int pointer, int button) {
+    touchPos.set(x, y);
+    viewport.unproject(touchPos);
+    if (button == Input.Buttons.LEFT && pointer == 0) {
+      charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
+    } else if (button == Input.Buttons.RIGHT || pointer == 1) {
+      charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+    }
+    return false;
+  }
+
+  @Override
+  public boolean touchUp(int x, int y, int pointer, int button) {
+    return false;
+  }
+
+  @Override
+  public boolean touchDragged(int x, int y, int pointer) {
+    return false;
+  }
+
+  @Override
+  public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+    return false;
+  }
+
+  @Override
+  public boolean mouseMoved(int x, int y) {
+    return false;
+  }
+
+  @Override
+  public boolean scrolled(float amountX, float amountY) {
+    return false;
   }
 }
