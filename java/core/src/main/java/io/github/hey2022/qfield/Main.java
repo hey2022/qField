@@ -108,8 +108,7 @@ public class Main implements ApplicationListener, InputProcessor {
     batch.setProjectionMatrix(hudCamera.combined);
     batch.begin();
     font.setColor(Color.BLACK);
-    font.getData().setScale(2.0f);
-    font.draw(batch, "FPS=" + Gdx.graphics.getFramesPerSecond(), 0, hudCamera.viewportHeight);
+    font.draw(batch, "FPS=" + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     batch.end();
   }
 
