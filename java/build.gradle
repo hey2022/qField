@@ -19,11 +19,16 @@ allprojects {
   apply plugin: 'idea'
 
   // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
-  idea {
-    module {
+  idea {module {
       outputDir file('build/classes/java/main')
       testOutputDir file('build/classes/java/test')
     }
+  }
+  ext {
+    shapedrawerVersion = '2.5.0'
+  }
+  repositories {
+    maven { url 'https://jitpack.io' }
   }
 }
 
@@ -67,6 +72,11 @@ subprojects {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://jitpack.io' }
+  }
+
+  dependencies {
+    implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
   }
 }
 
