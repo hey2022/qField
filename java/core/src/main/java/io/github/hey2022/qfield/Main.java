@@ -195,8 +195,25 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.F:
         cameraFollow ^= true;
         break;
+      case Input.Keys.R:
+        reset();
+        break;
+      case Input.Keys.C:
+        clear();
+        break;
     }
     return false;
+  }
+
+  public void reset() {
+    charge.reset(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE);
+    centerCamera(charge);
+    paused = true;
+  }
+
+  public void clear() {
+    charges = new Array<Charge>();
+    reset();
   }
 
   @Override
