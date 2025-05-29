@@ -68,10 +68,10 @@ public class Charge {
     applyForce(superposition(charges));
   }
 
-  public void update(float time_step) {
+  public void update(float timeStep) {
     if (fixed) return;
-    velocity.add(acceleration.scl(time_step * d[i]));
-    position.add(velocity.scl(time_step * c[i]));
+    velocity.add(acceleration.cpy().scl(timeStep * d[i]));
+    position.add(velocity.cpy().scl(timeStep * c[i]));
     i++;
     i %= 8; // 8th-order
   }
