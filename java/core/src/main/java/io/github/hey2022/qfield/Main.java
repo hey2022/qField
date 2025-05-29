@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,8 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main implements ApplicationListener, InputProcessor {
-
+public class Main extends InputAdapter implements ApplicationListener {
   static final float MIN_WORLD_WIDTH = 800;
   static final float MIN_WORLD_HEIGHT = 800;
 
@@ -181,16 +180,6 @@ public class Main implements ApplicationListener, InputProcessor {
   }
 
   @Override
-  public boolean keyUp(int keycode) {
-    return false;
-  }
-
-  @Override
-  public boolean keyTyped(char character) {
-    return false;
-  }
-
-  @Override
   public boolean touchDown(int x, int y, int pointer, int button) {
     touchPos.set(x, y);
     viewport.unproject(touchPos);
@@ -205,31 +194,6 @@ public class Main implements ApplicationListener, InputProcessor {
         charge.reset(touchPos.x, touchPos.y);
         break;
     }
-    return false;
-  }
-
-  @Override
-  public boolean touchUp(int x, int y, int pointer, int button) {
-    return false;
-  }
-
-  @Override
-  public boolean touchDragged(int x, int y, int pointer) {
-    return false;
-  }
-
-  @Override
-  public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-    return false;
-  }
-
-  @Override
-  public boolean mouseMoved(int x, int y) {
-    return false;
-  }
-
-  @Override
-  public boolean scrolled(float amountX, float amountY) {
     return false;
   }
 
