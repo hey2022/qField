@@ -38,6 +38,7 @@ public class Main implements ApplicationListener, InputProcessor {
   private Charge charge;
   private boolean init = false;
   private boolean cameraFollow = false;
+  private boolean paused = true;
 
   @Override
   public void create() {
@@ -78,7 +79,9 @@ public class Main implements ApplicationListener, InputProcessor {
   public void render() {
     // Draw your application here.
     input();
-    logic();
+    if (!paused) {
+      logic();
+    }
     if (shapeRender != null) {
       draw();
     }
@@ -165,6 +168,7 @@ public class Main implements ApplicationListener, InputProcessor {
   public boolean keyDown(int keycode) {
     switch (keycode) {
       case Input.Keys.SPACE:
+        paused ^= true;
         break;
       case Input.Keys.F:
         cameraFollow ^= true;
@@ -233,5 +237,8 @@ public class Main implements ApplicationListener, InputProcessor {
 
   public void addCharge(float x, float y, float charge, boolean fixed, float mass) {
     charges.add(new Charge(x, y, charge, fixed, mass));
+    if (paused) {
+      this.charge.updateForce(charges);
+    }
   }
 }
