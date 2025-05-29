@@ -37,6 +37,7 @@ public class Main implements ApplicationListener, InputProcessor {
   private Array<Charge> charges;
   private Charge charge;
   private boolean init = false;
+  private boolean cameraFollow = false;
 
   @Override
   public void create() {
@@ -85,6 +86,9 @@ public class Main implements ApplicationListener, InputProcessor {
 
   private void draw() {
     ScreenUtils.clear(Color.WHITE);
+    if (cameraFollow) {
+      centerCamera(charge);
+    }
     camera.update();
     hudCamera.update();
     shapeRender.setProjectionMatrix(camera.combined);
@@ -110,7 +114,6 @@ public class Main implements ApplicationListener, InputProcessor {
   }
 
   private void logic() {
-    camera.update();
     float delta = Gdx.graphics.getDeltaTime();
     for (int i = 0; i < 8; i++) {
       charge.updateForce(charges);
@@ -154,6 +157,9 @@ public class Main implements ApplicationListener, InputProcessor {
   public boolean keyDown(int keycode) {
     switch (keycode) {
       case Input.Keys.SPACE:
+        break;
+      case Input.Keys.F:
+        cameraFollow ^= true;
         break;
     }
     return false;
