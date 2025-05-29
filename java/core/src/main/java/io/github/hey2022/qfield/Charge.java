@@ -1,9 +1,9 @@
 package io.github.hey2022.qfield;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class Charge {
   private static final float[] c = {
@@ -41,7 +41,6 @@ public class Charge {
   private float mass;
   private boolean fixed;
   private Color color;
-
   private float charge;
 
   public Charge(float x, float y, float charge, boolean fixed, float mass) {
@@ -109,8 +108,12 @@ public class Charge {
     return force.scl(-1);
   }
 
-  public void draw(ShapeRenderer shape) {
-    shape.setColor(color);
-    shape.circle(position.x, position.y, RADIUS);
+  public void draw(ShapeDrawer drawer) {
+    drawer.filledCircle(position, RADIUS, color);
+
+    Vector2 end = position.cpy().mulAdd(velocity, 1e-15f / SCALE);
+    Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.BLUE);
+    end = position.cpy().mulAdd(force, 1e-4f / SCALE);
+    Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.RED);
   }
 }

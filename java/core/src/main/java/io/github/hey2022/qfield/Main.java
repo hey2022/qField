@@ -8,23 +8,27 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends InputAdapter implements ApplicationListener {
   static final float MIN_WORLD_WIDTH = 800;
   static final float MIN_WORLD_HEIGHT = 800;
 
-  private ShapeRenderer shapeRender;
-  private SpriteBatch batch;
+  private SpriteBatch hudBatch;
+  private PolygonSpriteBatch batch;
   private OrthographicCamera camera;
   private OrthographicCamera hudCamera;
   private Viewport viewport;
@@ -32,10 +36,11 @@ public class Main extends InputAdapter implements ApplicationListener {
   private double camSpeed;
   private Vector2 touchPos;
   private BitmapFont font;
+  private TextureRegion region;
+  private ShapeDrawer drawer;
 
   private Array<Charge> charges;
   private Charge charge;
-  private boolean init = false;
   private boolean cameraFollow = false;
   private boolean paused = true;
 
@@ -43,9 +48,18 @@ public class Main extends InputAdapter implements ApplicationListener {
   public void create() {
     // Prepare your application here.
     if (Gdx.app.getType() != ApplicationType.HeadlessDesktop) {
-      shapeRender = new ShapeRenderer();
-      batch = new SpriteBatch();
+      hudBatch = new SpriteBatch();
+      batch = new PolygonSpriteBatch();
       font = new BitmapFont();
+
+      // shape drawer
+      Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
+      pixmap.setColor(Color.WHITE);
+      pixmap.drawPixel(0, 0);
+      Texture texture = new Texture(pixmap);
+      pixmap.dispose();
+      region = new TextureRegion(texture, 0, 0, 1, 1);
+      drawer = new ShapeDrawer(batch, region);
     }
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -57,7 +71,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     touchPos = new Vector2();
 
-    charge = new Charge(0, 0, 1, false, 1);
+    charge = new Charge(MIN_WORLD_WIDTH / 2, MIN_WORLD_HEIGHT / 2, 1, false, 1);
     charges = new Array<Charge>();
 
     Gdx.input.setInputProcessor(this);
@@ -68,10 +82,6 @@ public class Main extends InputAdapter implements ApplicationListener {
     // Resize your application here. The parameters represent the new window size.
     viewport.update(width, height, true);
     hudViewport.update(width, height, true);
-    if (!init) {
-      centerCamera(charge);
-      init = true;
-    }
   }
 
   @Override
@@ -81,7 +91,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (!paused) {
       logic();
     }
-    if (shapeRender != null) {
+    if (Gdx.app.getType() != ApplicationType.HeadlessDesktop) {
       draw();
     }
   }
@@ -91,27 +101,29 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (cameraFollow) {
       centerCamera(charge);
     }
+    viewport.apply();
     camera.update();
-    hudCamera.update();
-    shapeRender.setProjectionMatrix(camera.combined);
-    batch.setProjectionMatrix(hudCamera.combined);
     Gdx.gl.glClear(GL32.GL_COLOR_BUFFER_BIT);
-
-    viewport.apply();
-    shapeRender.begin(ShapeType.Filled);
-    charge.draw(shapeRender);
-    for (Charge q : charges) {
-      q.draw(shapeRender);
-    }
-    shapeRender.end();
-
-    viewport.apply();
-    hudCamera.update();
-    batch.setProjectionMatrix(hudCamera.combined);
+    batch.setProjectionMatrix(camera.combined);
     batch.begin();
-    font.setColor(Color.BLACK);
-    font.draw(batch, "FPS=" + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
+
+    batch.setColor(Color.WHITE);
+    drawer.update();
+    for (Charge q : charges) {
+      q.draw(drawer);
+    }
+    charge.draw(drawer);
     batch.end();
+
+    // draw hud
+    hudViewport.apply();
+    hudCamera.update();
+    hudBatch.setProjectionMatrix(hudCamera.combined);
+    hudBatch.begin();
+    font.setColor(Color.BLACK);
+    font.draw(
+        hudBatch, "FPS=" + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
+    hudBatch.end();
   }
 
   private void logic() {
@@ -161,6 +173,12 @@ public class Main extends InputAdapter implements ApplicationListener {
   @Override
   public void dispose() {
     // Destroy application's resources here.
+    if (Gdx.app.getType() != ApplicationType.HeadlessDesktop) {
+      batch.dispose();
+      hudBatch.dispose();
+      font.dispose();
+      region.getTexture().dispose(); // Dispose texture here
+    }
   }
 
   @Override
@@ -200,6 +218,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   public void centerCamera(Charge charge) {
     Vector2 pos = charge.getPos();
     camera.position.set(pos.x, pos.y, camera.position.z);
+    camera.update();
   }
 
   public void addCharge(float x, float y, float charge, boolean fixed, float mass) {
