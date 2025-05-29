@@ -187,10 +187,16 @@ public class Main implements ApplicationListener, InputProcessor {
   public boolean touchDown(int x, int y, int pointer, int button) {
     touchPos.set(x, y);
     viewport.unproject(touchPos);
-    if (button == Input.Buttons.LEFT) {
-      charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
-    } else if (button == Input.Buttons.RIGHT) {
-      charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+    switch (button) {
+      case Input.Buttons.LEFT:
+        charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
+        break;
+      case Input.Buttons.RIGHT:
+        charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+        break;
+      case Input.Buttons.MIDDLE:
+        charge.reset(touchPos.x, touchPos.y);
+        break;
     }
     return false;
   }
