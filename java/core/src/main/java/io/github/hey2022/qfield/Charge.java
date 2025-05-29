@@ -31,7 +31,7 @@ public class Charge {
   private final float PROTON_MASS = 1.673e-27f;
   private final float SCALE = 1e-5f;
   public final float RADIUS = 10;
-  private final float HEIGHT2 = 8.1e-17f;
+  private final float HEIGHT = 9e-9f;
   private int i = 0;
 
   private Vector2 position;
@@ -98,6 +98,7 @@ public class Charge {
     }
 
     Vector2 force = new Vector2(0, 0);
+    float HEIGHT2 = (float) Math.pow(HEIGHT, 2);
     for (int j = 0; j < positions.length; j++) {
       Vector2 r = positions[j].cpy().sub(position).scl(SCALE);
       float r2 = r.len2();
