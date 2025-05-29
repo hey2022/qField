@@ -119,11 +119,11 @@ public class Charge {
   }
 
   public void draw(ShapeDrawer drawer) {
-    drawer.filledCircle(screenPosition, RADIUS, color);
-
     Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
     Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
     end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
     Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
+
+    drawer.filledCircle(screenPosition, RADIUS, color);
   }
 }
