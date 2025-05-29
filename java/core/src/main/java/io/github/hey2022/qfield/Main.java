@@ -46,11 +46,11 @@ public class Main implements ApplicationListener, InputProcessor {
       font = new BitmapFont();
     }
 
-    camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+    camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     viewport = new ScreenViewport(camera);
     camSpeed = 200;
 
-    hudCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+    hudCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     hudViewport = new ScreenViewport(hudCamera);
 
     touchPos = new Vector2();
