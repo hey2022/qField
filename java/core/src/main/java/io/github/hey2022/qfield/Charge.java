@@ -29,7 +29,7 @@ public class Charge {
   private final float ELEMENTAL_CHARGE = 1.602e-19f;
   private final float K = 8.988e9f;
   private final float PROTON_MASS = 1.673e-27f;
-  private final float SCALE = 1e-5f;
+  private final float SCALE = 1e-9f;
   public final float RADIUS = 10;
   private final float HEIGHT = 9e-9f;
   private int i = 0;
@@ -59,8 +59,8 @@ public class Charge {
   }
 
   public void applyForce(Vector2 force) {
-    this.force = force;
-    this.acceleration = force.scl(1f / this.mass);
+    this.force = force.cpy();
+    this.acceleration = force.cpy().scl(1f / this.mass);
   }
 
   public void updateForce(Array<Charge> charges) {
@@ -83,6 +83,10 @@ public class Charge {
     return position;
   }
 
+  public void setPos(Vector2 pos) {
+    this.position = pos;
+  }
+
   public Vector2 superposition(Array<Charge> charges) {
     if (charges == null || charges.size == 0) {
       return new Vector2(0, 0);
@@ -99,13 +103,13 @@ public class Charge {
     Vector2 force = new Vector2(0, 0);
     float HEIGHT2 = (float) Math.pow(HEIGHT, 2);
     for (int j = 0; j < positions.length; j++) {
-      Vector2 r = positions[j].cpy().sub(position).scl(SCALE);
+      Vector2 r = positions[j].cpy().sub(position).scl(-SCALE);
       float r2 = r.len2();
       if (r2 == 0) continue; // Skip self interaction
       float f = (K * q[j] * charge * r.len()) / (float) Math.pow((r2 + HEIGHT2), 1.5);
       force.add(r.nor().scl(f));
     }
-    return force.scl(-1);
+    return force;
   }
 
   public void draw(ShapeDrawer drawer) {
@@ -113,7 +117,7 @@ public class Charge {
 
     Vector2 end = position.cpy().mulAdd(velocity, 1e-15f / SCALE);
     Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.BLUE);
-    end = position.cpy().mulAdd(force, 1e-4f / SCALE);
+    end = position.cpy().mulAdd(force, 1e6f / SCALE);
     Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.RED);
   }
 }

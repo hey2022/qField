@@ -43,6 +43,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private Charge charge;
   private boolean cameraFollow = false;
   private boolean paused = true;
+  private float timeStep = 3e-8f;
 
   @Override
   public void create() {
@@ -127,11 +128,10 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   private void logic() {
-    float delta = Gdx.graphics.getDeltaTime();
     for (int i = 0; i < 8; i++) {
       charge.updateForce(charges);
-      charge.update(delta);
-      // System.out.println(charge.getPos());
+      charge.update(timeStep);
+      System.out.println(charge.getPos());
     }
   }
 
