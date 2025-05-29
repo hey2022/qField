@@ -139,9 +139,9 @@ public class Main implements ApplicationListener, InputProcessor {
       touchPos.set(Gdx.input.getX(), Gdx.input.getY());
       viewport.unproject(touchPos);
       if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-        charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
+        addCharge(touchPos.x, touchPos.y, 1, true, 1);
       } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-        charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+        addCharge(touchPos.x, touchPos.y, -1, true, 1);
       }
     }
   }
@@ -189,10 +189,10 @@ public class Main implements ApplicationListener, InputProcessor {
     viewport.unproject(touchPos);
     switch (button) {
       case Input.Buttons.LEFT:
-        charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
+        addCharge(touchPos.x, touchPos.y, 1, true, 1);
         break;
       case Input.Buttons.RIGHT:
-        charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+        addCharge(touchPos.x, touchPos.y, -1, true, 1);
         break;
       case Input.Buttons.MIDDLE:
         charge.reset(touchPos.x, touchPos.y);
@@ -229,5 +229,9 @@ public class Main implements ApplicationListener, InputProcessor {
   public void centerCamera(Charge charge) {
     Vector2 pos = charge.getPos();
     camera.position.set(pos.x, pos.y, camera.position.z);
+  }
+
+  public void addCharge(float x, float y, float charge, boolean fixed, float mass) {
+    charges.add(new Charge(x, y, charge, fixed, mass));
   }
 }
