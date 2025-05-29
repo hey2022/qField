@@ -29,12 +29,12 @@ public class Charge {
   private final float ELEMENTAL_CHARGE = 1.602e-19f;
   private final float K = 8.988e9f;
   private final float PROTON_MASS = 1.673e-27f;
-  private final float SCALE = 1e-9f;
   public final float RADIUS = 10;
-  private final float HEIGHT = 9e-9f;
+  private final float HEIGHT = 9e-6f;
   private int i = 0;
 
   private Vector2 position;
+  private Vector2 screenPosition;
   private Vector2 force;
   private Vector2 acceleration;
   private Vector2 velocity;
@@ -53,6 +53,7 @@ public class Charge {
 
   public void reset(float x, float y) {
     position = new Vector2(x, y);
+    screenPosition = position.cpy().scl(1 / Main.SCALE);
     velocity = new Vector2(0, 0);
     acceleration = new Vector2(0, 0);
     force = new Vector2(0, 0);
@@ -71,6 +72,7 @@ public class Charge {
     if (fixed) return;
     velocity.add(acceleration.cpy().scl(timeStep * d[i]));
     position.add(velocity.cpy().scl(timeStep * c[i]));
+    screenPosition = position.cpy().scl(1 / Main.SCALE);
     i++;
     i %= 8; // 8th-order
   }
@@ -81,6 +83,10 @@ public class Charge {
 
   public Vector2 getPos() {
     return position;
+  }
+
+  public Vector2 getScreenPos() {
+    return screenPosition;
   }
 
   public void setPos(Vector2 pos) {
@@ -103,7 +109,7 @@ public class Charge {
     Vector2 force = new Vector2(0, 0);
     float HEIGHT2 = (float) Math.pow(HEIGHT, 2);
     for (int j = 0; j < positions.length; j++) {
-      Vector2 r = positions[j].cpy().sub(position).scl(-SCALE);
+      Vector2 r = position.cpy().sub(positions[j]);
       float r2 = r.len2();
       if (r2 == 0) continue; // Skip self interaction
       float f = (K * q[j] * charge * r.len()) / (float) Math.pow((r2 + HEIGHT2), 1.5);
@@ -113,11 +119,11 @@ public class Charge {
   }
 
   public void draw(ShapeDrawer drawer) {
-    drawer.filledCircle(position, RADIUS, color);
+    drawer.filledCircle(screenPosition, RADIUS, color);
 
-    Vector2 end = position.cpy().mulAdd(velocity, 1e-15f / SCALE);
-    Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.BLUE);
-    end = position.cpy().mulAdd(force, 1e6f / SCALE);
-    Draw.drawArrow(drawer, position.cpy(), end.cpy(), Color.RED);
+    Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
+    Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
+    end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
+    Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
   }
 }

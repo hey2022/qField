@@ -44,6 +44,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private boolean cameraFollow = false;
   private boolean paused = true;
   private float timeStep = 3e-8f;
+  public static final float SCALE = 1e-6f;
 
   @Override
   public void create() {
@@ -72,7 +73,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     touchPos = new Vector2();
 
-    charge = new Charge(MIN_WORLD_WIDTH / 2, MIN_WORLD_HEIGHT / 2, 1, false, 1);
+    charge = new Charge(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE, 1, false, 1);
     charges = new Array<Charge>();
 
     Gdx.input.setInputProcessor(this);
@@ -152,6 +153,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isTouched()) {
       touchPos.set(Gdx.input.getX(), Gdx.input.getY());
       viewport.unproject(touchPos);
+      touchPos.scl(SCALE);
       if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
         addCharge(touchPos.x, touchPos.y, 1, true, 1);
       } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
@@ -201,6 +203,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   public boolean touchDown(int x, int y, int pointer, int button) {
     touchPos.set(x, y);
     viewport.unproject(touchPos);
+    touchPos.scl(SCALE);
     switch (button) {
       case Input.Buttons.LEFT:
         addCharge(touchPos.x, touchPos.y, 1, true, 1);
@@ -216,7 +219,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   public void centerCamera(Charge charge) {
-    Vector2 pos = charge.getPos();
+    Vector2 pos = charge.getScreenPos();
     camera.position.set(pos.x, pos.y, camera.position.z);
     camera.update();
   }
