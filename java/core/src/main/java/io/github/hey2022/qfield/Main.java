@@ -36,6 +36,7 @@ public class Main implements ApplicationListener, InputProcessor {
 
   private Array<Charge> charges;
   private Charge charge;
+  private boolean init = false;
 
   @Override
   public void create() {
@@ -66,6 +67,10 @@ public class Main implements ApplicationListener, InputProcessor {
     // Resize your application here. The parameters represent the new window size.
     viewport.update(width, height, true);
     hudViewport.update(width, height, true);
+    if (!init) {
+      centerCamera(charge);
+      init = true;
+    }
   }
 
   @Override
@@ -199,5 +204,10 @@ public class Main implements ApplicationListener, InputProcessor {
   @Override
   public boolean scrolled(float amountX, float amountY) {
     return false;
+  }
+
+  public void centerCamera(Charge charge) {
+    Vector2 pos = charge.getPos();
+    camera.position.set(pos.x, pos.y, camera.position.z);
   }
 }
