@@ -167,6 +167,9 @@ public class Main implements ApplicationListener, InputProcessor {
   @Override
   public boolean keyDown(int keycode) {
     switch (keycode) {
+      case Input.Keys.Q:
+        Gdx.app.exit();
+        break;
       case Input.Keys.SPACE:
         paused ^= true;
         break;
