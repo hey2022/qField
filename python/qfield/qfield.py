@@ -7,6 +7,8 @@ from colors import WHITE
 
 
 class qfield:
+    SCALE = 1e-6
+
     def __init__(self, interactive=True, width=800, height=800):
         self.interactive = interactive
         if self.interactive:
@@ -29,7 +31,7 @@ class qfield:
 
     def input(self):
         """Handle all input events"""
-        world_pos = self.camera + pygame.mouse.get_pos()
+        world_pos = (self.camera + pygame.mouse.get_pos()) * self.SCALE
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
