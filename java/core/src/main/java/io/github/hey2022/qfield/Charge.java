@@ -98,21 +98,15 @@ public class Charge {
       return new Vector2(0, 0);
     }
 
-    Vector2[] positions = new Vector2[charges.size];
-    float[] q = new float[charges.size];
-    for (int i = 0; i < charges.size; i++) {
-      Charge charge = charges.get(i);
-      positions[i] = charge.getPos();
-      q[i] = charge.getCharge();
-    }
-
     Vector2 force = new Vector2(0, 0);
     float HEIGHT2 = (float) Math.pow(HEIGHT, 2);
-    for (int j = 0; j < positions.length; j++) {
-      Vector2 r = position.cpy().sub(positions[j]);
+    for (int i = 0; i < charges.size; i++) {
+      Charge charge = charges.get(i);
+      Vector2 r = position.cpy().sub(charge.getPos());
       float r2 = r.len2();
       if (r2 == 0) continue; // Skip self interaction
-      float f = (K * q[j] * charge * r.len()) / (float) Math.pow((r2 + HEIGHT2), 1.5);
+      float f =
+          (K * charge.getCharge() * this.charge * r.len()) / (float) Math.pow((r2 + HEIGHT2), 1.5);
       force.add(r.nor().scl(f));
     }
     return force;
