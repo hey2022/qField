@@ -8,9 +8,9 @@ class Charge:
     ELEMENTAL_CHARGE = 1.602e-19  # C
     K = 8.988e9  # Nm^2/C^2
     PROTON_MASS = 1.673e-27  # kg
-    SCALE = 1e-9  # pixel to nm
     RADIUS = 10  # render purposes only
-    HEIGHT = 9e-9  # height difference between fixed and free particles
+    HEIGHT = 9e-6  # height difference between fixed and free particles
+    SCALE = 1e-6  # pixel to micrometer
 
     # SABA(10,6,4) symplectic integrator coefficients
     c = np.array(
@@ -48,6 +48,7 @@ class Charge:
 
     def reset(self, x, y):
         self.position = np.array([float(x), float(y)])
+        self.screen_position = self.position / self.SCALE
         self.velocity = np.array([0.0, 0.0])
         self.acceleration = np.array([0.0, 0.0])
         self.force = np.array([0.0, 0.0])
@@ -68,6 +69,7 @@ class Charge:
             return
         self.velocity += self.acceleration * time_step * self.d[self.pos]
         self.position += self.velocity * time_step * self.c[self.pos]
+        self.screen_position = self.position / self.SCALE
         self.pos += 1
         self.pos %= 8
 
@@ -79,7 +81,7 @@ class Charge:
         positions = np.array([charge.position for charge in charges])
         q = np.array([charge.charge for charge in charges])
 
-        r_vectors = (self.position - positions) * self.SCALE
+        r_vectors = self.position - positions
         r_squared = np.sum(r_vectors**2, axis=1)
         r_magnitudes = np.sqrt(r_squared)
 
@@ -105,10 +107,10 @@ class Charge:
         surface_size = surface.get_size()
         if not (
             camera[0] - self.RADIUS
-            <= self.position[0]
+            <= self.screen_position[0]
             <= camera[0] + surface_size[0] + self.RADIUS
             and camera[1] - self.RADIUS
-            <= self.position[1]
+            <= self.screen_position[1]
             <= camera[1] + surface_size[1] + self.RADIUS
         ):
             return
@@ -116,14 +118,14 @@ class Charge:
         pygame.draw.circle(
             surface,
             self.color,
-            (self.position - camera),
+            (self.screen_position - camera),
             self.RADIUS,
         )
 
     def render_velocity(self, surface, camera=(0, 0)):
-        end = self.position + self.velocity / self.SCALE * 1e-15
-        draw.draw_arrow(surface, self.position - camera, end - camera, "blue")
+        end = self.screen_position + self.velocity / self.SCALE * 1e-6
+        draw.draw_arrow(surface, self.screen_position - camera, end - camera, "blue")
 
     def render_force(self, surface, camera=(0, 0)):
-        end = self.position + self.force / self.SCALE * 1e6
-        draw.draw_arrow(surface, self.position - camera, end - camera, "red")
+        end = self.screen_position + self.force / self.SCALE * 1e15
+        draw.draw_arrow(surface, self.screen_position - camera, end - camera, "red")
