@@ -29,7 +29,7 @@ public class Charge {
   private final float ELEMENTAL_CHARGE = 1.602e-19f;
   private final float K = 8.988e9f;
   private final float PROTON_MASS = 1.673e-27f;
-  public final float RADIUS = 10;
+  public static final float RADIUS = 10;
   private final float HEIGHT = 9e-6f;
   private int i = 0;
 
