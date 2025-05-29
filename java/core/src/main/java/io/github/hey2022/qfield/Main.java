@@ -136,6 +136,15 @@ public class Main implements ApplicationListener, InputProcessor {
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
+    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isTouched()) {
+      touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+      viewport.unproject(touchPos);
+      if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
+      } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+        charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
+      }
+    }
   }
 
   @Override
