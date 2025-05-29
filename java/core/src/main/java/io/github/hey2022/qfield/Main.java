@@ -179,9 +179,9 @@ public class Main implements ApplicationListener, InputProcessor {
   public boolean touchDown(int x, int y, int pointer, int button) {
     touchPos.set(x, y);
     viewport.unproject(touchPos);
-    if (button == Input.Buttons.LEFT && pointer == 0) {
+    if (button == Input.Buttons.LEFT) {
       charges.add(new Charge(touchPos.x, touchPos.y, 1, true, 1));
-    } else if (button == Input.Buttons.RIGHT || pointer == 1) {
+    } else if (button == Input.Buttons.RIGHT) {
       charges.add(new Charge(touchPos.x, touchPos.y, -1, true, 1));
     }
     return false;
