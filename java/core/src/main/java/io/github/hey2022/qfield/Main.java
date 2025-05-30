@@ -155,6 +155,15 @@ public class Main extends InputAdapter implements ApplicationListener {
         0,
         Align.right,
         false);
+    Vector2 position = charge.getPos();
+    font.draw(
+        hudBatch,
+        "Position: " + df.format(position.x) + "," + df.format(position.y),
+        hudCamera.viewportWidth - 10,
+        15,
+        0,
+        Align.right,
+        false);
     hudBatch.end();
   }
 
