@@ -124,7 +124,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudBatch.begin();
     font.setColor(Color.BLACK);
     font.draw(
-        hudBatch, "FPS=" + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
+        hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     hudBatch.end();
   }
 
