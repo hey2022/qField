@@ -115,7 +115,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     batch.setColor(Color.WHITE);
     drawer.update();
     for (Charge q : charges) {
-      q.draw(drawer);
+      if (inCamera(q.getScreenPos())) q.draw(drawer);
     }
     charge.draw(drawer);
 
@@ -286,5 +286,25 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (paused) {
       this.charge.updateForce(charges);
     }
+  }
+
+  public boolean isInCamera(float x, float y) {
+    return inCamera(new Vector2(x, y));
+  }
+
+  /**
+   * @param Pos
+   * @return whether the positon can be viewed by camera
+   */
+  public boolean inCamera(Vector2 Pos) {
+    Vector2 screenPos = viewport.project(Pos.cpy());
+    if (screenPos.x < -10
+        || screenPos.x > viewport.getScreenWidth() + 10
+        || screenPos.y < -10
+        || screenPos.y > viewport.getScreenHeight() + 10) {
+      return false;
+    }
+    System.out.println("(" + viewport.getScreenWidth() + ", " + viewport.getScreenHeight() + ")");
+    return true;
   }
 }
