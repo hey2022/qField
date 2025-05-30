@@ -132,7 +132,6 @@ public class Main extends InputAdapter implements ApplicationListener {
     for (int i = 0; i < 8; i++) {
       charge.updateForce(charges);
       charge.update(timeStep);
-      System.out.println(charge.getPos());
     }
   }
 
