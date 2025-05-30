@@ -16,10 +16,12 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.text.DecimalFormat;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -38,6 +40,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private BitmapFont font;
   private TextureRegion region;
   private ShapeDrawer drawer;
+  private DecimalFormat df = new DecimalFormat("0.000E0");
 
   private Array<Charge> charges;
   private Charge charge;
@@ -117,7 +120,10 @@ public class Main extends InputAdapter implements ApplicationListener {
     charge.draw(drawer);
     batch.end();
 
-    // draw hud
+    drawHud();
+  }
+
+  private void drawHud() {
     hudViewport.apply();
     hudCamera.update();
     hudBatch.setProjectionMatrix(hudCamera.combined);
@@ -125,6 +131,30 @@ public class Main extends InputAdapter implements ApplicationListener {
     font.setColor(Color.BLACK);
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
+    font.draw(
+        hudBatch,
+        "Total energy: " + df.format(charge.energy(charges)),
+        hudCamera.viewportWidth - 10,
+        hudCamera.viewportHeight - 10,
+        0,
+        Align.right,
+        false);
+    font.draw(
+        hudBatch,
+        "Kinetic energy: " + df.format(charge.kineticEnergy()),
+        hudCamera.viewportWidth - 10,
+        hudCamera.viewportHeight - 30,
+        0,
+        Align.right,
+        false);
+    font.draw(
+        hudBatch,
+        "Potential energy: " + df.format(charge.electricPotential(charges)),
+        hudCamera.viewportWidth - 10,
+        hudCamera.viewportHeight - 50,
+        0,
+        Align.right,
+        false);
     hudBatch.end();
   }
 

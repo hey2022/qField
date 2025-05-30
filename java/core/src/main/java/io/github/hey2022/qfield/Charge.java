@@ -112,6 +112,33 @@ public class Charge {
     return force;
   }
 
+  public float energy(Array<Charge> charges) {
+    return kineticEnergy() + electricPotential(charges);
+  }
+
+  public float kineticEnergy() {
+    float kineticEnergy = (float) (1.0 / 2.0 * mass * velocity.len2());
+    return kineticEnergy;
+  }
+
+  public float electricPotential(Array<Charge> charges) {
+    float electricPotential = 0.0f;
+    if (charges == null) {
+      return electricPotential;
+    }
+
+    float HEIGHT2 = (float) Math.pow(HEIGHT, 2);
+    for (int i = 0; i < charges.size; i++) {
+      Charge charge = charges.get(i);
+      Vector2 r = position.cpy().sub(charge.getPos());
+      float r2 = r.len2();
+      if (r2 == 0) continue; // Skip self interaction
+      float u = (K * charge.getCharge() * this.charge * r.len()) / (r2 + HEIGHT2);
+      electricPotential += u;
+    }
+    return electricPotential;
+  }
+
   public void draw(ShapeDrawer drawer) {
     Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
     Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
