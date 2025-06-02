@@ -51,6 +51,13 @@ public class Main extends InputAdapter implements ApplicationListener {
   private float timeStep = 3e-8f;
   public static final float SCALE = 1e-6f;
 
+  enum InputMode {
+    CHARGE,
+    CHECKPOINT
+  }
+
+  InputMode inputMode;
+
   @Override
   public void create() {
     // Prepare your application here.
@@ -84,6 +91,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     checkpoints = new Array<Checkpoint>();
 
+    inputMode = InputMode.CHARGE;
     Gdx.input.setInputProcessor(this);
   }
 
@@ -119,6 +127,12 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     batch.setColor(Color.WHITE);
     drawer.update();
+    // draw checkpoints first to make them under the charge
+
+    for (Checkpoint point : checkpoints) {
+      point.draw(drawer);
+    }
+
     for (Charge q : charges) {
       if (inCamera(q.getScreenPos())) q.draw(drawer);
     }
@@ -186,11 +200,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
 
     for (int i = checkpoints.size - 1; i >= 0; i--) {
-      if (checkpoints.get(i).overlaps(charge)) {
-        checkpoints.removeIndex(i);
-        checkCount++;
-        System.out.printf("checkpoint %d checked\n", checkCount - 1);
-      }
+      checkpoints.get(i).check(charge);
     }
   }
 
@@ -265,18 +275,42 @@ public class Main extends InputAdapter implements ApplicationListener {
         checkpoints.add(new Checkpoint(cursorPos, 30));
         System.out.printf("Created new Checkpoint at (%f, %f)\n", cursorPos.x, cursorPos.y);
         break;
+      case Input.Keys.G:
+        toggleInputMode();
+        break;
     }
     return false;
+  }
+
+  void toggleInputMode() {
+    switch (inputMode) {
+      case CHARGE:
+        inputMode = InputMode.CHECKPOINT;
+        break;
+      case CHECKPOINT:
+        inputMode = InputMode.CHARGE;
+        break;
+    }
   }
 
   public void reset() {
     charge.reset(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE);
     centerCamera(charge);
     paused = true;
+    for (Checkpoint point : checkpoints) {
+      point.setChecked(false);
+    }
   }
 
   public void clear() {
-    charges = new Array<Charge>();
+    switch (inputMode) {
+      case CHARGE:
+        charges = new Array<Charge>();
+        break;
+      case CHECKPOINT:
+        checkpoints = new Array<Checkpoint>();
+        break;
+    }
     reset();
   }
 
@@ -284,19 +318,31 @@ public class Main extends InputAdapter implements ApplicationListener {
   public boolean touchDown(int x, int y, int pointer, int button) {
     touchPos.set(x, y);
     viewport.unproject(touchPos);
-    touchPos.scl(SCALE);
-    switch (button) {
-      case Input.Buttons.LEFT:
-        addCharge(touchPos.x, touchPos.y, 1, true, 1);
-        break;
-      case Input.Buttons.RIGHT:
-        addCharge(touchPos.x, touchPos.y, -1, true, 1);
-        break;
-      case Input.Buttons.MIDDLE:
-        charge.reset(touchPos.x, touchPos.y);
-        break;
+    if (inputMode == InputMode.CHARGE) {
+      touchPos.scl(SCALE);
+      switch (button) {
+        case Input.Buttons.LEFT:
+          addCharge(touchPos.x, touchPos.y, 1, true, 1);
+          break;
+        case Input.Buttons.RIGHT:
+          addCharge(touchPos.x, touchPos.y, -1, true, 1);
+          break;
+        case Input.Buttons.MIDDLE:
+          charge.reset(touchPos.x, touchPos.y);
+          break;
+      }
+    } else {
+      switch (button) {
+        case Input.Buttons.LEFT:
+          addCheckpoint(touchPos.x, touchPos.y);
+          break;
+      }
     }
     return false;
+  }
+
+  public void addCheckpoint(float x, float y) {
+    checkpoints.add(new Checkpoint(x, y, 30));
   }
 
   public void centerCamera(Charge charge) {
