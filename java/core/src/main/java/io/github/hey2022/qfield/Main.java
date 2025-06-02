@@ -44,6 +44,8 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   private Array<Charge> charges;
   private Charge charge;
+  private Array<Checkpoint> checkpoints;
+  private int checkCount;
   private boolean cameraFollow = false;
   private boolean paused = true;
   private float timeStep = 3e-8f;
@@ -65,6 +67,7 @@ public class Main extends InputAdapter implements ApplicationListener {
       pixmap.dispose();
       region = new TextureRegion(texture, 0, 0, 1, 1);
       drawer = new ShapeDrawer(batch, region);
+      checkCount = 0;
     }
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -78,6 +81,8 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     charge = new Charge(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE, 1, false, 1);
     charges = new Array<Charge>();
+
+    checkpoints = new Array<Checkpoint>();
 
     Gdx.input.setInputProcessor(this);
   }
@@ -118,6 +123,10 @@ public class Main extends InputAdapter implements ApplicationListener {
       if (inCamera(q.getScreenPos())) q.draw(drawer);
     }
     charge.draw(drawer);
+
+    for (Checkpoint point : checkpoints) {
+      point.draw(drawer);
+    }
 
     Draw.drawTargetArrow(
         drawer, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
@@ -173,6 +182,15 @@ public class Main extends InputAdapter implements ApplicationListener {
     for (int i = 0; i < 8; i++) {
       charge.updateForce(charges);
       charge.update(timeStep);
+      // System.out.println(charge.getPos());
+    }
+
+    for (int i = checkpoints.size - 1; i >= 0; i--) {
+      if (checkpoints.get(i).overlaps(charge)) {
+        checkpoints.removeIndex(i);
+        checkCount++;
+        System.out.printf("checkpoint %d checked\n", checkCount - 1);
+      }
     }
   }
 
@@ -241,6 +259,12 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.C:
         clear();
         break;
+      case Input.Keys.P:
+        Vector2 cursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        viewport.unproject(cursorPos);
+        checkpoints.add(new Checkpoint(cursorPos, 30));
+        System.out.printf("Created new Checkpoint at (%f, %f)\n", cursorPos.x, cursorPos.y);
+        break;
     }
     return false;
   }
@@ -304,7 +328,8 @@ public class Main extends InputAdapter implements ApplicationListener {
         || screenPos.y > viewport.getScreenHeight() + 10) {
       return false;
     }
-    System.out.println("(" + viewport.getScreenWidth() + ", " + viewport.getScreenHeight() + ")");
+    // System.out.println("(" + viewport.getScreenWidth() + ", " + viewport.getScreenHeight() +
+    // ")");
     return true;
   }
 }
