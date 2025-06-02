@@ -10,7 +10,7 @@ public class Checkpoint {
   private static int pointsCount = 0;
 
   public int index;
-  private Circle hitbox;
+  private Circle circle;
   private boolean checked;
 
   public boolean isChecked() {
@@ -29,7 +29,7 @@ public class Checkpoint {
   private Color color;
 
   public Checkpoint(Vector2 pos, float radius) {
-    hitbox = new Circle(pos, radius);
+    circle = new Circle(pos, radius);
     index = pointsCount;
     checked = false;
     color = Color.GREEN;
@@ -37,7 +37,7 @@ public class Checkpoint {
   }
 
   public Checkpoint(float x, float y, float radius) {
-    hitbox = new Circle(x, y, radius);
+    circle = new Circle(x, y, radius);
     index = pointsCount;
     checked = false;
     color = Color.GREEN;
@@ -45,18 +45,23 @@ public class Checkpoint {
   }
 
   public void draw(ShapeDrawer drawer) {
-    drawer.filledCircle(hitbox.x, hitbox.y, hitbox.radius, color);
+    drawer.setColor(color);
+    drawer.setDefaultLineWidth(5);
+    drawer.circle(circle.x, circle.y, circle.radius);
   }
 
   public boolean overlaps(Charge charge) {
     Circle chargeCircle = new Circle(charge.getScreenPos(), Charge.RADIUS);
-    return chargeCircle.overlaps(hitbox);
+    return chargeCircle.overlaps(circle);
   }
 
   public void check(Charge charge) {
     if (!checked && overlaps(charge)) {
       setChecked(true);
-      System.out.printf("checkpoint %d checked\n", index);
     }
+  }
+
+  public void resetRadius(Vector2 edgePos) {
+    circle.radius = edgePos.cpy().sub(circle.x, circle.y).len();
   }
 }
