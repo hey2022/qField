@@ -195,6 +195,15 @@ public class Main extends InputAdapter implements ApplicationListener {
         0,
         Align.right,
         false);
+    font.setColor(Color.GREEN);
+    font.draw(
+        hudBatch,
+        inputMode == InputMode.CHARGE ? "" : "Checkppoint Mode",
+        10,
+        15,
+        0,
+        Align.left,
+        false);
     hudBatch.end();
   }
 
