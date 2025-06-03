@@ -28,6 +28,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 public class Main extends InputAdapter implements ApplicationListener {
   static final float MIN_WORLD_WIDTH = 800;
   static final float MIN_WORLD_HEIGHT = 800;
+  static final Vector2 initalPos = new Vector2(0, 0);
 
   private SpriteBatch hudBatch;
   private PolygonSpriteBatch batch;
@@ -50,6 +51,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private boolean cameraFollow = false;
   private boolean paused = true;
   private float timeStep = 3e-8f;
+  private long frameCount;
   public static final float SCALE = 1e-6f;
 
   enum InputMode {
@@ -70,16 +72,16 @@ public class Main extends InputAdapter implements ApplicationListener {
       // shape drawer
       Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
       pixmap.setColor(Color.WHITE);
-      pixmap.drawPixel(0, 0);
+      pixmap.drawPixel((int) initalPos.x, (int) initalPos.y);
       Texture texture = new Texture(pixmap);
       pixmap.dispose();
       region = new TextureRegion(texture, 0, 0, 1, 1);
       drawer = new ShapeDrawer(batch, region);
-      checkCount = 0;
     }
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     viewport = new ScreenViewport(camera);
+    frameCount = 0;
     camSpeed = 200;
 
     hudCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -87,11 +89,13 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     touchPos = new Vector2();
 
-    charge = new Charge(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE, 1, false, 1);
+    charge = new Charge(0, 0, 1, false, 1);
     charges = new Array<Charge>();
+    camera.update();
 
     checkpoints = new Array<Checkpoint>();
     addingCheckpoint = false;
+    checkCount = 0;
 
     inputMode = InputMode.CHARGE;
     Gdx.input.setInputProcessor(this);
@@ -100,7 +104,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   @Override
   public void resize(int width, int height) {
     // Resize your application here. The parameters represent the new window size.
-    viewport.update(width, height, true);
+    viewport.update(width, height, false);
     hudViewport.update(width, height, true);
   }
 
@@ -294,7 +298,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   public void reset() {
-    charge.reset(MIN_WORLD_WIDTH / 2 * SCALE, MIN_WORLD_HEIGHT / 2 * SCALE);
+    charge.reset(initalPos.x, initalPos.y);
     centerCamera(charge);
     paused = true;
     for (Checkpoint point : checkpoints) {
