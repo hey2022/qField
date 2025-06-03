@@ -1,6 +1,7 @@
 package io.github.hey2022.qfield;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -42,6 +43,7 @@ public class Charge {
   private boolean fixed;
   private Color color;
   private float charge;
+  public Circle circle;
 
   public Charge(float x, float y, float charge, boolean fixed, float mass) {
     this.reset(x, y);
@@ -49,6 +51,9 @@ public class Charge {
     this.fixed = fixed;
     this.color = charge > 0 ? Color.RED : Color.BLUE;
     this.charge = charge * this.ELEMENTAL_CHARGE;
+    if (!fixed) {
+      circle = new Circle(x, y, RADIUS);
+    }
   }
 
   public void reset(float x, float y) {

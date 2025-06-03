@@ -46,12 +46,10 @@ public class Main extends InputAdapter implements ApplicationListener {
   private Array<Charge> charges;
   private Charge charge;
   private Array<Checkpoint> checkpoints;
-  private boolean addingCheckpoint;
   private int checkCount;
   private boolean cameraFollow = false;
   private boolean paused = true;
   private float timeStep = 3e-8f;
-  private long frameCount;
   public static final float SCALE = 1e-6f;
 
   enum InputMode {
@@ -81,7 +79,6 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     viewport = new ScreenViewport(camera);
-    frameCount = 0;
     camSpeed = 200;
 
     hudCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -94,7 +91,6 @@ public class Main extends InputAdapter implements ApplicationListener {
     camera.update();
 
     checkpoints = new Array<Checkpoint>();
-    addingCheckpoint = false;
     checkCount = 0;
 
     inputMode = InputMode.CHARGE;
@@ -198,7 +194,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     font.setColor(Color.GREEN);
     font.draw(
         hudBatch,
-        inputMode == InputMode.CHARGE ? "" : "Checkppoint Mode",
+        inputMode == InputMode.CHARGE ? "" : "Checkpoint Mode",
         10,
         15,
         0,
@@ -213,8 +209,8 @@ public class Main extends InputAdapter implements ApplicationListener {
       charge.update(timeStep);
     }
 
-    for (int i = checkpoints.size - 1; i >= 0; i--) {
-      checkpoints.get(i).check(charge);
+    for (Checkpoint checkpoint : checkpoints) {
+      checkpoint.check(charge);
     }
   }
 
@@ -232,7 +228,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
-    if (inputMode != InputMode.CHECKPOINT
+    if (inputMode == InputMode.CHARGE
         && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
         && Gdx.input.isTouched()) {
       touchPos.set(Gdx.input.getX(), Gdx.input.getY());
@@ -313,7 +309,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     centerCamera(charge);
     paused = true;
     for (Checkpoint point : checkpoints) {
-      point.setChecked(false);
+      point.setReached(false);
     }
   }
 
@@ -350,7 +346,6 @@ public class Main extends InputAdapter implements ApplicationListener {
       switch (button) {
         case Input.Buttons.LEFT:
           addCheckpoint(touchPos.x, touchPos.y, 30);
-          addingCheckpoint = true;
           break;
       }
     }
@@ -359,8 +354,8 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   @Override
   public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    if (inputMode == InputMode.CHECKPOINT) {
-      addingCheckpoint = false;
+    if (checkpoints != null && checkpoints.size > 0 && inputMode == InputMode.CHECKPOINT) {
+      checkpoints.peek().enabled = true;
     }
 
     return false;
@@ -370,7 +365,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   public boolean touchDragged(int screenX, int screenY, int pointer) {
     Vector2 curPos = new Vector2(screenX, screenY);
     viewport.unproject(curPos);
-    if (addingCheckpoint) {
+    if (checkpoints != null && checkpoints.size > 0 && inputMode == InputMode.CHECKPOINT) {
       Checkpoint point = checkpoints.peek();
       point.resetRadius(curPos);
     }
@@ -394,22 +389,13 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
   }
 
-  public boolean isInCamera(float x, float y) {
+  public boolean inCamera(float x, float y) {
     return inCamera(new Vector2(x, y));
   }
 
-  /**
-   * @param Pos
-   * @return whether the positon can be viewed by camera
-   */
   public boolean inCamera(Vector2 Pos) {
     Vector2 screenPos = viewport.project(Pos.cpy());
-    if (screenPos.x < -10
-        || screenPos.x > viewport.getScreenWidth() + 10
-        || screenPos.y < -10
-        || screenPos.y > viewport.getScreenHeight() + 10) {
-      return false;
-    }
-    return true;
+    return (-10 < screenPos.x && screenPos.x < viewport.getScreenWidth() + 10)
+        && (-10 < screenPos.y && screenPos.y < viewport.getScreenHeight() + 10);
   }
 }
