@@ -118,8 +118,10 @@ public class Main extends InputAdapter implements ApplicationListener {
       q.draw(drawer);
     }
     charge.draw(drawer);
-    batch.end();
 
+    Draw.drawTargetArrow(
+        drawer, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
+    batch.end();
     drawHud();
   }
 
