@@ -46,19 +46,19 @@ public class Charge {
   public Circle circle;
 
   public Charge(float x, float y, float charge, boolean fixed, float mass) {
-    this.reset(x, y);
     this.mass = mass * this.PROTON_MASS;
     this.fixed = fixed;
     this.color = charge > 0 ? Color.RED : Color.BLUE;
     this.charge = charge * this.ELEMENTAL_CHARGE;
-    if (!fixed) {
-      circle = new Circle(x, y, RADIUS);
-    }
+    this.reset(x, y);
   }
 
   public void reset(float x, float y) {
     position = new Vector2(x, y);
     screenPosition = position.cpy().scl(1 / Main.SCALE);
+    if (!fixed) {
+      circle = new Circle(screenPosition, RADIUS);
+    }
     velocity = new Vector2(0, 0);
     acceleration = new Vector2(0, 0);
     force = new Vector2(0, 0);
@@ -78,6 +78,7 @@ public class Charge {
     velocity.add(acceleration.cpy().scl(timeStep * d[i]));
     position.add(velocity.cpy().scl(timeStep * c[i]));
     screenPosition = position.cpy().scl(1 / Main.SCALE);
+    circle.setPosition(screenPosition);
     i++;
     i %= 8; // 8th-order
   }
