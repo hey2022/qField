@@ -232,7 +232,9 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Gdx.input.isTouched()) {
+    if (inputMode != InputMode.CHECKPOINT
+        && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+        && Gdx.input.isTouched()) {
       touchPos.set(Gdx.input.getX(), Gdx.input.getY());
       viewport.unproject(touchPos);
       touchPos.scl(SCALE);
