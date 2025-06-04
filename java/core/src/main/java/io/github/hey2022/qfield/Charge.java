@@ -31,6 +31,7 @@ public class Charge {
   private final float K = 8.988e9f;
   private final float PROTON_MASS = 1.673e-27f;
   public static final float RADIUS = 10;
+  private static final float SELECTED_LIGHT_FACTOR = 1 / 1.5f;
   private final float HEIGHT = 9e-6f;
   private int i = 0;
 
@@ -43,6 +44,7 @@ public class Charge {
   private boolean fixed;
   private Color color;
   private float charge;
+  private boolean selected;
   public Circle circle;
 
   public Charge(float x, float y, float charge, boolean fixed, float mass) {
@@ -51,14 +53,13 @@ public class Charge {
     this.color = charge > 0 ? Color.RED : Color.BLUE;
     this.charge = charge * this.ELEMENTAL_CHARGE;
     this.reset(x, y);
+    this.selected = false;
   }
 
   public void reset(float x, float y) {
     position = new Vector2(x, y);
     screenPosition = position.cpy().scl(1 / Main.SCALE);
-    if (!fixed) {
-      circle = new Circle(screenPosition, RADIUS);
-    }
+    circle = new Circle(screenPosition, RADIUS);
     velocity = new Vector2(0, 0);
     acceleration = new Vector2(0, 0);
     force = new Vector2(0, 0);
@@ -97,6 +98,18 @@ public class Charge {
 
   public void setPos(Vector2 pos) {
     this.position = pos;
+  }
+
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public void select() {
+    this.selected = true;
+  }
+
+  public void unselect() {
+    this.selected = false;
   }
 
   public Vector2 superposition(Array<Charge> charges) {
@@ -146,11 +159,18 @@ public class Charge {
   }
 
   public void draw(ShapeDrawer drawer) {
-    Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
-    Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
-    end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
-    Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
+    if (!fixed) {
+      Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
+      Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
 
-    drawer.filledCircle(screenPosition, RADIUS, color);
+      end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
+      Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
+    }
+
+    Color tempColor = color.cpy();
+    if (selected) {
+      tempColor.mul(SELECTED_LIGHT_FACTOR);
+    }
+    drawer.filledCircle(screenPosition, RADIUS, tempColor);
   }
 }

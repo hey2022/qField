@@ -38,6 +38,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private Viewport hudViewport;
   private double camSpeed;
   private Vector2 touchPos;
+  private Vector2 cursorPos;
   private BitmapFont font;
   private TextureRegion region;
   private ShapeDrawer drawer;
@@ -85,6 +86,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudViewport = new ScreenViewport(hudCamera);
 
     touchPos = new Vector2();
+    cursorPos = new Vector2();
 
     charge = new Charge(0, 0, 1, false, 1);
     charges = new Array<Charge>();
@@ -129,8 +131,8 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     batch.setColor(Color.WHITE);
     drawer.update();
-    // draw checkpoints first to make them under the charge
 
+    // draw checkpoints first to make them under the charge
     for (Checkpoint point : checkpoints) {
       point.draw(drawer);
     }
@@ -140,14 +142,35 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
     charge.draw(drawer);
 
-    for (Checkpoint point : checkpoints) {
-      point.draw(drawer);
-    }
-
     Draw.drawTargetArrow(
         drawer, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
     batch.end();
     drawHud();
+  }
+
+  private void select() {
+    boolean foundSelection = false;
+    switch (inputMode) {
+      case CHARGE:
+        for (int i = charges.size - 1; i >= 0; i--) {
+          if (!foundSelection && charges.get(i).circle.contains(cursorPos)) {
+            charges.get(i).select();
+            foundSelection = true;
+          } else {
+            charges.get(i).unselect();
+          }
+        }
+        break;
+      case CHECKPOINT:
+        for (int i = checkpoints.size - 1; i >= 0; i--) {
+          if (!foundSelection && checkpoints.get(i).circle.contains(cursorPos)) {
+            checkpoints.get(i).select();
+            foundSelection = true;
+          } else {
+            checkpoints.get(i).unselect();
+          }
+        }
+    }
   }
 
   private void drawHud() {
@@ -228,18 +251,24 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
-    if (inputMode == InputMode.CHARGE
-        && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-        && Gdx.input.isTouched()) {
-      touchPos.set(Gdx.input.getX(), Gdx.input.getY());
-      viewport.unproject(touchPos);
-      touchPos.scl(SCALE);
-      if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-        addCharge(touchPos.x, touchPos.y, 1, true, 1);
-      } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-        addCharge(touchPos.x, touchPos.y, -1, true, 1);
+    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+        delete();
+      } else if (inputMode == InputMode.CHARGE && Gdx.input.isTouched()) {
+        {
+          touchPos.set(Gdx.input.getX(), Gdx.input.getY());
+          viewport.unproject(touchPos);
+          touchPos.scl(SCALE);
+          if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            addCharge(touchPos.x, touchPos.y, 1, true, 1);
+          } else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            addCharge(touchPos.x, touchPos.y, -1, true, 1);
+          }
+        }
       }
     }
+
+    select();
   }
 
   @Override
@@ -282,12 +311,13 @@ public class Main extends InputAdapter implements ApplicationListener {
         clear();
         break;
       case Input.Keys.P:
-        Vector2 cursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        viewport.unproject(cursorPos);
         checkpoints.add(new Checkpoint(cursorPos, 30));
         break;
       case Input.Keys.G:
         toggleInputMode();
+        break;
+      case Input.Keys.X:
+        delete();
         break;
     }
     return false;
@@ -297,9 +327,15 @@ public class Main extends InputAdapter implements ApplicationListener {
     switch (inputMode) {
       case CHARGE:
         inputMode = InputMode.CHECKPOINT;
+        for (Charge q : charges) {
+          q.unselect();
+        }
         break;
       case CHECKPOINT:
         inputMode = InputMode.CHARGE;
+        for (Checkpoint p : checkpoints) {
+          p.unselect();
+        }
         break;
     }
   }
@@ -310,6 +346,30 @@ public class Main extends InputAdapter implements ApplicationListener {
     paused = true;
     for (Checkpoint point : checkpoints) {
       point.setReached(false);
+    }
+  }
+
+  public void delete() {
+    switch (inputMode) {
+      case CHARGE:
+        for (int i = charges.size - 1; i >= 0; i--) {
+          if (charges.get(i).isSelected()) {
+            charges.removeIndex(i);
+            break;
+          }
+        }
+        if (paused) {
+          this.charge.updateForce(charges);
+        }
+        break;
+      case CHECKPOINT:
+        for (int i = checkpoints.size - 1; i >= 0; i--) {
+          if (checkpoints.get(i).isSelected()) {
+            checkpoints.removeIndex(i);
+            break;
+          }
+        }
+        break;
     }
   }
 
@@ -362,13 +422,20 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   @Override
-  public boolean touchDragged(int screenX, int screenY, int pointer) {
-    Vector2 curPos = new Vector2(screenX, screenY);
-    viewport.unproject(curPos);
+  public boolean touchDragged(int x, int y, int pointer) {
+    cursorPos.set(x, y);
+    viewport.unproject(cursorPos);
     if (checkpoints != null && checkpoints.size > 0 && inputMode == InputMode.CHECKPOINT) {
       Checkpoint point = checkpoints.peek();
-      point.resetRadius(curPos);
+      point.resetRadius(cursorPos);
     }
+    return false;
+  }
+
+  @Override
+  public boolean mouseMoved(int x, int y) {
+    cursorPos.set(x, y);
+    viewport.unproject(cursorPos);
     return false;
   }
 
