@@ -1,4 +1,3 @@
-
 buildscript {
   repositories {
     mavenCentral()
@@ -152,6 +151,8 @@ tasks.register("distZip", Zip) {
   //// The result will be in html/build/ with a name containing "-dist".
   destinationDirectory.set(file("build"))
 }
+
+tasks.compileJava.dependsOn("processResources")
 
 tasks.compileGwt.dependsOn("addSource")
 tasks.draftCompileGwt.dependsOn("addSource")
