@@ -8,11 +8,17 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 /** Checkpoint */
 public class Checkpoint {
   private static int pointsCount = 0;
+  private static final float SELECTED_LIGHT_FACTOR = 1 / 1.5f;
 
   public int index;
-  private Circle circle;
-  private boolean reached;
+  public Circle circle;
+
   public boolean enabled;
+
+  private boolean reached;
+  private boolean selected;
+
+  private Color color;
 
   public boolean isReached() {
     return reached;
@@ -20,31 +26,45 @@ public class Checkpoint {
 
   public void setReached(boolean checked) {
     this.reached = checked;
-    if (checked == false) {
-      color = Color.GREEN;
+    if (!checked) {
+      color = Color.LIME;
     } else {
       color = Color.LIGHT_GRAY;
     }
   }
 
-  private Color color;
-
   public Checkpoint(Vector2 pos, float radius) {
     this(pos.x, pos.y, radius);
+  }
+
+  public void select() {
+    selected = true;
+  }
+
+  public void unselect() {
+    selected = false;
+  }
+
+  public boolean isSelected() {
+    return selected;
   }
 
   public Checkpoint(float x, float y, float radius) {
     circle = new Circle(x, y, radius);
     index = pointsCount;
     reached = false;
-    color = Color.GREEN;
+    color = Color.LIME;
     pointsCount++;
     enabled = false;
   }
 
   public void draw(ShapeDrawer drawer) {
-    drawer.setColor(color);
-    drawer.setDefaultLineWidth(5);
+    Color tempColor = color.cpy();
+    if (selected) {
+      tempColor.mul(SELECTED_LIGHT_FACTOR);
+    }
+    drawer.setColor(tempColor);
+    drawer.setDefaultLineWidth(10);
     drawer.circle(circle.x, circle.y, circle.radius);
   }
 
