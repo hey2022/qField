@@ -28,9 +28,6 @@ public class Lwjgl3Launcher {
     //// try to match fractional
     //// refresh rates. The Vsync setting above should limit the actual FPS to match
     //// the monitor.
-    // configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate
-    //// + 1);
-    // TODO use no limit when headlessness
     configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
     //// If you remove the above line and set Vsync to false, you can get unlimited
     //// FPS, which can be
