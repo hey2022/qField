@@ -64,7 +64,7 @@ public class Checkpoint {
       tempColor.mul(SELECTED_LIGHT_FACTOR);
     }
     drawer.setColor(tempColor);
-    drawer.setDefaultLineWidth(10);
+    drawer.setDefaultLineWidth(5);
     drawer.circle(circle.x, circle.y, circle.radius);
   }
 
