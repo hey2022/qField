@@ -304,6 +304,10 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.F:
         cameraFollow ^= true;
         break;
+      case Input.Keys.O:
+        cameraFollow = false;
+        centerCamera(0, 0);
+        break;
       case Input.Keys.R:
         reset();
         break;
@@ -445,7 +449,11 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   public void centerCamera(Charge charge) {
     Vector2 pos = charge.getScreenPos();
-    camera.position.set(pos.x, pos.y, camera.position.z);
+    centerCamera(pos.x, pos.y);
+  }
+
+  public void centerCamera(float x, float y) {
+    camera.position.set(x, y, camera.position.z);
     camera.update();
   }
 
