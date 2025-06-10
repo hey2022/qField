@@ -34,6 +34,7 @@ public class Charge {
   private static final float SELECTED_LIGHT_FACTOR = 1 / 1.5f;
   private final float HEIGHT = 9e-6f;
   private int i = 0;
+  private final int PATH_LENGTH = 10000;
 
   private Vector2 position;
   private Vector2 screenPosition;
@@ -44,6 +45,7 @@ public class Charge {
   private boolean fixed;
   private Color color;
   private float charge;
+  private Path path;
   private boolean selected;
   public Circle circle;
 
@@ -63,6 +65,7 @@ public class Charge {
     velocity = new Vector2(0, 0);
     acceleration = new Vector2(0, 0);
     force = new Vector2(0, 0);
+    path = new Path(PATH_LENGTH);
   }
 
   public void applyForce(Vector2 force) {
@@ -160,6 +163,8 @@ public class Charge {
 
   public void draw(ShapeDrawer drawer) {
     if (!fixed) {
+      path.add(screenPosition);
+      path.drawPath(drawer);
       Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
       Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
 
