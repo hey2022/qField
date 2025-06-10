@@ -183,7 +183,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     font.draw(
         hudBatch,
-        "Total energy: " + df.format(charge.energy(charges)),
+        String.format("Total energy: %s J", df.format(charge.energy(charges))),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 10,
         0,
@@ -191,7 +191,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         false);
     font.draw(
         hudBatch,
-        "Kinetic energy: " + df.format(charge.kineticEnergy()),
+        String.format("Kinetic energy: %s J", df.format(charge.kineticEnergy())),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 30,
         0,
@@ -199,7 +199,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         false);
     font.draw(
         hudBatch,
-        "Potential energy: " + df.format(charge.electricPotential(charges)),
+        String.format("Potential energy: %s J", df.format(charge.electricPotential(charges))),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 50,
         0,
@@ -208,7 +208,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     Vector2 position = charge.getPos();
     font.draw(
         hudBatch,
-        "Position: (" + df.format(position.x) + ", " + df.format(position.y) + ")",
+        String.format("Position: (%s m, %s m)", df.format(position.x), df.format(position.y)),
         hudCamera.viewportWidth - 10,
         15,
         0,
