@@ -64,8 +64,10 @@ public class Checkpoint {
       tempColor.mul(SELECTED_LIGHT_FACTOR);
     }
     drawer.setColor(tempColor);
-    drawer.setDefaultLineWidth(10);
+    float defaultLineWidth = drawer.getDefaultLineWidth();
+    drawer.setDefaultLineWidth(5);
     drawer.circle(circle.x, circle.y, circle.radius);
+    drawer.setDefaultLineWidth(defaultLineWidth);
   }
 
   public boolean overlaps(Charge charge) {
