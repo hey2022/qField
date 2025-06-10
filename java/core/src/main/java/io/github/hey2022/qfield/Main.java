@@ -179,6 +179,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudBatch.setProjectionMatrix(hudCamera.combined);
     hudBatch.begin();
     font.setColor(Color.BLACK);
+    font.draw(hudBatch, "Charges: " + charges.size, 10, 15);
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     font.draw(
