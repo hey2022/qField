@@ -19,7 +19,6 @@
       in {
         inherit jdk;
         gradle = prev.gradle.override {java = jdk;};
-        lombok = prev.lombok.override {inherit jdk;};
       };
     }
     // flake-utils.lib.eachDefaultSystem (
@@ -41,10 +40,7 @@
             jdt-language-server
           ];
 
-          shellHook = let
-            loadLombok = "-javaagent:${pkgs.lombok}/share/java/lombok.jar";
-          in ''
-            export JAVA_TOOL_OPTIONS="${loadLombok}''${JAVA_TOOL_OPTIONS:+ $JAVA_TOOL_OPTIONS}"
+          shellHook = ''
             export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath system-libraries}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
           '';
         };
