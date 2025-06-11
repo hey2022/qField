@@ -74,10 +74,12 @@ public class Checkpoint {
     return charge.circle.overlaps(circle);
   }
 
-  public void check(Charge charge) {
+  public boolean check(Charge charge) {
     if (!reached && overlaps(charge) && enabled) {
       setReached(true);
+      return true;
     }
+    return false;
   }
 
   public void resetRadius(Vector2 edgePos) {

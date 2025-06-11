@@ -46,8 +46,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   private Array<Charge> charges;
   private Charge charge;
-  private Array<Checkpoint> checkpoints;
-  private int checkCount;
+  private Checkpoints checkpoints;
   private boolean cameraFollow = false;
   private boolean paused = true;
   private float timeStep = 3e-8f;
@@ -95,8 +94,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     charges = new Array<Charge>();
     camera.update();
 
-    checkpoints = new Array<Checkpoint>();
-    checkCount = 0;
+    checkpoints = new Checkpoints();
 
     inputMode = InputMode.CHARGE;
     Gdx.input.setInputProcessor(this);
@@ -142,9 +140,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     drawer.update();
 
     // draw checkpoints first to make them under the charge
-    for (Checkpoint point : checkpoints) {
-      point.draw(drawer);
-    }
+    checkpoints.draw(drawer);
 
     for (Charge q : charges) {
       if (inCamera(q.getScreenPos())) q.draw(drawer);
@@ -171,14 +167,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         }
         break;
       case CHECKPOINT:
-        for (int i = checkpoints.size - 1; i >= 0; i--) {
-          if (!foundSelection && checkpoints.get(i).circle.contains(cursorPos)) {
-            checkpoints.get(i).select();
-            foundSelection = true;
-          } else {
-            checkpoints.get(i).unselect();
-          }
-        }
+        checkpoints.select(cursorPos);
     }
   }
 
@@ -240,10 +229,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   private void logic() {
     charge.update(charges, timeStep);
-
-    for (Checkpoint checkpoint : checkpoints) {
-      checkpoint.check(charge);
-    }
+    checkpoints.check(charge);
   }
 
   private void input() {
@@ -335,7 +321,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         clear();
         break;
       case Input.Keys.P:
-        checkpoints.add(new Checkpoint(cursorPos, 30));
+        checkpoints.add(cursorPos, 30);
         break;
       case Input.Keys.G:
         toggleInputMode();
@@ -357,9 +343,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         break;
       case CHECKPOINT:
         inputMode = InputMode.CHARGE;
-        for (Checkpoint p : checkpoints) {
-          p.unselect();
-        }
+        checkpoints.unselect();
         break;
     }
   }
@@ -368,9 +352,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     charge.reset(initalPos.x, initalPos.y);
     centerCamera(charge);
     paused = true;
-    for (Checkpoint point : checkpoints) {
-      point.setReached(false);
-    }
+    checkpoints.reset();
   }
 
   public void delete() {
@@ -387,12 +369,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         }
         break;
       case CHECKPOINT:
-        for (int i = checkpoints.size - 1; i >= 0; i--) {
-          if (checkpoints.get(i).isSelected()) {
-            checkpoints.removeIndex(i);
-            break;
-          }
-        }
+        checkpoints.delete();
         break;
     }
   }
@@ -403,7 +380,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         charges = new Array<Charge>();
         break;
       case CHECKPOINT:
-        checkpoints = new Array<Checkpoint>();
+        checkpoints = new Checkpoints();
         break;
     }
     reset();
@@ -429,7 +406,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     } else {
       switch (button) {
         case Input.Buttons.LEFT:
-          addCheckpoint(touchPos.x, touchPos.y, 30);
+          checkpoints.add(touchPos, 30);
           break;
       }
     }
@@ -438,7 +415,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   @Override
   public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-    if (checkpoints != null && checkpoints.size > 0 && inputMode == InputMode.CHECKPOINT) {
+    if (inputMode == InputMode.CHECKPOINT && !checkpoints.empty()) {
       checkpoints.peek().enabled = true;
     }
 
@@ -449,9 +426,8 @@ public class Main extends InputAdapter implements ApplicationListener {
   public boolean touchDragged(int x, int y, int pointer) {
     cursorPos.set(x, y);
     viewport.unproject(cursorPos);
-    if (checkpoints != null && checkpoints.size > 0 && inputMode == InputMode.CHECKPOINT) {
-      Checkpoint point = checkpoints.peek();
-      point.resetRadius(cursorPos);
+    if (inputMode == InputMode.CHECKPOINT && !checkpoints.empty()) {
+      checkpoints.peek().resetRadius(cursorPos);
     }
     return false;
   }
@@ -461,10 +437,6 @@ public class Main extends InputAdapter implements ApplicationListener {
     cursorPos.set(x, y);
     viewport.unproject(cursorPos);
     return false;
-  }
-
-  public void addCheckpoint(float x, float y, float radius) {
-    checkpoints.add(new Checkpoint(x, y, radius));
   }
 
   public void centerCamera(Charge charge) {
