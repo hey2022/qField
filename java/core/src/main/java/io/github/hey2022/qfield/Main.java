@@ -426,7 +426,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   public boolean touchDragged(int x, int y, int pointer) {
     cursorPos.set(x, y);
     viewport.unproject(cursorPos);
-    if (inputMode == InputMode.CHECKPOINT && !checkpoints.empty()) {
+    if (inputMode == InputMode.CHECKPOINT && !checkpoints.empty() && !checkpoints.peek().enabled) {
       checkpoints.peek().resetRadius(cursorPos);
     }
     return false;
