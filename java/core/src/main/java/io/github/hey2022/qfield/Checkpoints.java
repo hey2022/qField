@@ -13,6 +13,14 @@ public class Checkpoints {
     return checkpoints.size - activeCheckpoints.size;
   }
 
+  public int checkpoints() {
+    return checkpoints.size;
+  }
+
+  public int activeCheckpoints() {
+    return activeCheckpoints.size;
+  }
+
   public void select(Vector2 cursorPos) {
     boolean foundSelection = false;
     for (int i = checkpoints.size - 1; i >= 0; i--) {
