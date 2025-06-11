@@ -184,6 +184,17 @@ public class Main extends InputAdapter implements ApplicationListener {
     font.draw(hudBatch, "Charges: " + charges.size, 10, hudCamera.viewportHeight - 50);
     font.draw(
         hudBatch,
+        "Active Checkpoints: " + checkpoints.activeCheckpoints(),
+        10,
+        hudCamera.viewportHeight - 70);
+    font.draw(
+        hudBatch,
+        "Completed Checkpoints: " + checkpoints.completedCheckpoints(),
+        10,
+        hudCamera.viewportHeight - 90);
+
+    font.draw(
+        hudBatch,
         String.format("Total energy: %s J", df.format(charge.energy(charges))),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 10,
