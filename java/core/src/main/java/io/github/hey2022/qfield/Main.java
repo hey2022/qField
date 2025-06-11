@@ -239,11 +239,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   private void logic() {
-    for (int i = 0; i < 8; i++) {
-      charge.updateForce(charges);
-      charge.update(timeStep);
-    }
-    charge.path.add(charge.getScreenPos());
+    charge.update(charges, timeStep);
 
     for (Checkpoint checkpoint : checkpoints) {
       checkpoint.check(charge);

@@ -33,7 +33,6 @@ public class Charge {
   public static final float RADIUS = 10;
   private static final float SELECTED_LIGHT_FACTOR = 1 / 1.5f;
   private final float HEIGHT = 9e-6f;
-  private int i = 0;
   private final int PATH_LENGTH = 10000;
 
   private Vector2 position;
@@ -45,7 +44,7 @@ public class Charge {
   private boolean fixed;
   private Color color;
   private float charge;
-  public Path path;
+  private Path path;
   private boolean selected;
   public Circle circle;
 
@@ -77,14 +76,16 @@ public class Charge {
     applyForce(superposition(charges));
   }
 
-  public void update(float timeStep) {
+  public void update(Array<Charge> charges, float timeStep) {
     if (fixed) return;
-    velocity.add(acceleration.cpy().scl(timeStep * d[i]));
-    position.add(velocity.cpy().scl(timeStep * c[i]));
+    for (int i = 0; i < 8; i++) {
+      updateForce(charges);
+      velocity.add(acceleration.cpy().scl(timeStep * d[i]));
+      position.add(velocity.cpy().scl(timeStep * c[i]));
+    }
     screenPosition = position.cpy().scl(1 / Main.SCALE);
     circle.setPosition(screenPosition);
-    i++;
-    i %= 8; // 8th-order
+    path.add(screenPosition);
   }
 
   public float getCharge() {
