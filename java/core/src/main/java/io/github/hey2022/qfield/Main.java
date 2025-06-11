@@ -50,18 +50,26 @@ public class Main extends InputAdapter implements ApplicationListener {
   private Checkpoints checkpoints;
   private boolean cameraFollow = false;
   private boolean paused = true;
+  private boolean started;
+  private boolean finished;
   private float timeStep = 3e-8f;
   public static final float SCALE = 1e-6f;
   private float accumulator = 0.0f;
   private final float SPT = 0.01f;
   private float gameSpeed = 1.0f;
 
-  enum InputMode {
+  private enum InputMode {
     CHARGE,
     CHECKPOINT
   }
 
+  private enum GameMode {
+    SANDBOX,
+    GAME
+  }
+
   InputMode inputMode;
+  GameMode gameMode;
 
   @Override
   public void create() {
@@ -99,6 +107,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     checkpoints = new Checkpoints();
 
     inputMode = InputMode.CHARGE;
+    gameMode = GameMode.SANDBOX;
     Gdx.input.setInputProcessor(this);
   }
 
@@ -112,6 +121,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   @Override
   public void render() {
     // Draw your application here.
+    // System.out.println(started);
     input();
     if (!paused) {
       float delta = Gdx.graphics.getDeltaTime();
@@ -195,6 +205,13 @@ public class Main extends InputAdapter implements ApplicationListener {
         "Completed Checkpoints: " + checkpoints.completedCheckpoints(),
         10,
         hudCamera.viewportHeight - 90);
+    if (gameMode == GameMode.GAME) {
+      font.draw(
+          hudBatch,
+          "Game Status: " + (finished ? "Finished" : (paused ? "Paused" : "Running")),
+          10,
+          hudCamera.viewportHeight - 110);
+    }
 
     font.draw(
         hudBatch,
@@ -244,6 +261,12 @@ public class Main extends InputAdapter implements ApplicationListener {
   private void logic() {
     charge.update(charges, timeStep);
     checkpoints.check(charge);
+    if (gameMode == GameMode.GAME) {
+      if (checkpoints.allChecked()) {
+        finished = true;
+        paused = true;
+      }
+    }
   }
 
   private void input() {
@@ -268,7 +291,7 @@ public class Main extends InputAdapter implements ApplicationListener {
       adjustZoom(-1.0f * dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+      if (Gdx.input.isKeyPressed(Input.Keys.X) && !(gameMode == GameMode.GAME && started)) {
         delete();
       } else if (inputMode == InputMode.CHARGE && Gdx.input.isTouched()) {
         {
@@ -316,6 +339,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         break;
       case Input.Keys.SPACE:
         paused ^= true;
+        started = true;
         break;
       case Input.Keys.DOWN:
         if (gameSpeed > 0.125) {
@@ -339,43 +363,77 @@ public class Main extends InputAdapter implements ApplicationListener {
         reset();
         break;
       case Input.Keys.C:
-        clear();
+        clear(inputMode);
         break;
       case Input.Keys.I:
         charge.drawArrow ^= true;
         break;
       case Input.Keys.P:
-        checkpoints.add(cursorPos, 30);
+        checkpoints.add(cursorPos, 30, false);
         break;
       case Input.Keys.G:
         toggleInputMode();
         break;
       case Input.Keys.X:
-        delete();
+        if (Gdx.input.isKeyPressed(Input.Keys.X) && !(gameMode == GameMode.GAME && started)) {
+          delete();
+        }
         break;
+      case Input.Keys.NUM_1:
+        toggleGameMode(1);
     }
     return false;
   }
 
+  void toggleGameMode(int level) {
+    clear(InputMode.CHECKPOINT);
+    clear(InputMode.CHARGE);
+    switch (gameMode) {
+      case SANDBOX:
+        gameMode = GameMode.GAME;
+        gameInit(level);
+        break;
+      case GAME:
+        gameMode = GameMode.SANDBOX;
+        break;
+    }
+  }
+
+  void gameInit(int level) {
+    started = false;
+    switch (level) {
+      case 1:
+        centerCamera(200, 200);
+        checkpoints.add(new Vector2(400, 400), 30, true);
+        break;
+        // Add more levels as needed
+    }
+  }
+
   void toggleInputMode() {
-    switch (inputMode) {
-      case CHARGE:
-        inputMode = InputMode.CHECKPOINT;
-        for (Charge q : charges) {
-          q.unselect();
-        }
-        break;
-      case CHECKPOINT:
-        inputMode = InputMode.CHARGE;
-        checkpoints.unselect();
-        break;
+    if (gameMode == GameMode.SANDBOX) {
+      switch (inputMode) {
+        case CHARGE:
+          inputMode = InputMode.CHECKPOINT;
+          for (Charge q : charges) {
+            q.unselect();
+          }
+          break;
+        case CHECKPOINT:
+          if (gameMode == GameMode.SANDBOX) {
+            inputMode = InputMode.CHARGE;
+            checkpoints.unselect();
+          }
+          break;
+      }
     }
   }
 
   public void reset() {
     charge.reset(initalPos.x, initalPos.y);
-    centerCamera(charge);
+    // centerCamera(charge);
     paused = true;
+    started = false;
     checkpoints.reset();
   }
 
@@ -398,8 +456,8 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
   }
 
-  public void clear() {
-    switch (inputMode) {
+  public void clear(InputMode mode) {
+    switch (mode) {
       case CHARGE:
         charges = new Array<Charge>();
         break;
@@ -412,6 +470,9 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   @Override
   public boolean touchDown(int x, int y, int pointer, int button) {
+    if (gameMode == GameMode.GAME && started) {
+      return false; // Do not allow interaction in game mode after started
+    }
     touchPos.set(x, y);
     viewport.unproject(touchPos);
     if (inputMode == InputMode.CHARGE) {
@@ -430,7 +491,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     } else {
       switch (button) {
         case Input.Buttons.LEFT:
-          checkpoints.add(touchPos, 30);
+          checkpoints.add(touchPos, 30, false);
           break;
       }
     }

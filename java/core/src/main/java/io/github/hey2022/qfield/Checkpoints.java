@@ -17,6 +17,10 @@ public class Checkpoints {
     return checkpoints.size;
   }
 
+  public boolean allChecked() {
+    return activeCheckpoints.size == 0;
+  }
+
   public int activeCheckpoints() {
     return activeCheckpoints.size;
   }
@@ -55,8 +59,8 @@ public class Checkpoints {
     activeCheckpoints = new Array<Checkpoint>(checkpoints);
   }
 
-  public void add(Vector2 position, float radius) {
-    Checkpoint newCheckpoint = new Checkpoint(position, radius);
+  public void add(Vector2 position, float radius, boolean enabled) {
+    Checkpoint newCheckpoint = new Checkpoint(position, radius, enabled);
     activeCheckpoints.add(newCheckpoint);
     checkpoints.add(newCheckpoint);
   }

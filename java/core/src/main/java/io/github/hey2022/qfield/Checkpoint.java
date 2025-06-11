@@ -37,6 +37,11 @@ public class Checkpoint {
     this(pos.x, pos.y, radius);
   }
 
+  public Checkpoint(Vector2 pos, float radius, boolean enabled) {
+    this(pos.x, pos.y, radius);
+    this.enabled = enabled;
+  }
+
   public void select() {
     selected = true;
   }
