@@ -45,7 +45,7 @@ public class Charge {
   private boolean fixed;
   private Color color;
   private float charge;
-  private Path path;
+  public Path path;
   private boolean selected;
   public Circle circle;
 
@@ -163,7 +163,6 @@ public class Charge {
 
   public void draw(ShapeDrawer drawer) {
     if (!fixed) {
-      path.add(screenPosition);
       path.drawPath(drawer);
       Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
       Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);

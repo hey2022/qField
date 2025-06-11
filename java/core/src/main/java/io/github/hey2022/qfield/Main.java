@@ -52,6 +52,9 @@ public class Main extends InputAdapter implements ApplicationListener {
   private boolean paused = true;
   private float timeStep = 3e-8f;
   public static final float SCALE = 1e-6f;
+  private float accumulator = 0.0f;
+  private final float SPT = 0.01f;
+  private float gameSpeed = 1.0f;
 
   enum InputMode {
     CHARGE,
@@ -111,7 +114,13 @@ public class Main extends InputAdapter implements ApplicationListener {
     // Draw your application here.
     input();
     if (!paused) {
-      logic();
+      float delta = Gdx.graphics.getDeltaTime();
+      float SPT = this.SPT / gameSpeed;
+      accumulator += delta;
+      while (accumulator >= SPT) {
+        logic();
+        accumulator -= SPT;
+      }
     }
     if (Gdx.app.getType() != ApplicationType.HeadlessDesktop) {
       draw();
@@ -183,6 +192,8 @@ public class Main extends InputAdapter implements ApplicationListener {
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     font.draw(
+        hudBatch, String.format("Game speed: %.3f", gameSpeed), 10, hudCamera.viewportHeight - 30);
+    font.draw(
         hudBatch,
         String.format("Total energy: %s J", df.format(charge.energy(charges))),
         hudCamera.viewportWidth - 10,
@@ -232,6 +243,7 @@ public class Main extends InputAdapter implements ApplicationListener {
       charge.updateForce(charges);
       charge.update(timeStep);
     }
+    charge.path.add(charge.getScreenPos());
 
     for (Checkpoint checkpoint : checkpoints) {
       checkpoint.check(charge);
@@ -301,6 +313,17 @@ public class Main extends InputAdapter implements ApplicationListener {
         break;
       case Input.Keys.SPACE:
         paused ^= true;
+        break;
+      case Input.Keys.MINUS:
+        if (gameSpeed > 0.125) {
+          gameSpeed /= 2.0f;
+        }
+        break;
+      case Input.Keys.EQUALS:
+        gameSpeed *= 2.0f;
+        break;
+      case Input.Keys.NUM_0:
+        gameSpeed = 1.0f;
         break;
       case Input.Keys.F:
         cameraFollow ^= true;
