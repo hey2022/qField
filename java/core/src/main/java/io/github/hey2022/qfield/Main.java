@@ -188,11 +188,11 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudBatch.setProjectionMatrix(hudCamera.combined);
     hudBatch.begin();
     font.setColor(Color.BLACK);
-    font.draw(hudBatch, "Charges: " + charges.size, 10, 15);
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     font.draw(
         hudBatch, String.format("Game speed: %.3f", gameSpeed), 10, hudCamera.viewportHeight - 30);
+    font.draw(hudBatch, "Charges: " + charges.size, 10, hudCamera.viewportHeight - 50);
     font.draw(
         hudBatch,
         String.format("Total energy: %s J", df.format(charge.energy(charges))),
