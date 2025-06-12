@@ -42,6 +42,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private BitmapFont font;
   private TextureRegion region;
   private ShapeDrawer drawer;
+  private ShapeDrawer hudDrawer;
   private DecimalFormat df = new DecimalFormat("0.000E0");
 
   private Array<Charge> charges;
@@ -78,6 +79,7 @@ public class Main extends InputAdapter implements ApplicationListener {
       pixmap.dispose();
       region = new TextureRegion(texture, 0, 0, 1, 1);
       drawer = new ShapeDrawer(batch, region);
+      hudDrawer = new ShapeDrawer(hudBatch, region);
     }
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -146,9 +148,6 @@ public class Main extends InputAdapter implements ApplicationListener {
       if (inCamera(q.getScreenPos())) q.draw(drawer);
     }
     charge.draw(drawer);
-
-    Draw.drawTargetArrow(
-        drawer, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
     batch.end();
     drawHud();
   }
@@ -176,6 +175,10 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudCamera.update();
     hudBatch.setProjectionMatrix(hudCamera.combined);
     hudBatch.begin();
+    hudDrawer.update();
+    Draw.drawTargetArrow(
+        hudDrawer, hudCamera, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
+
     font.setColor(Color.BLACK);
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
@@ -245,17 +248,23 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   private void input() {
     float displacement = (float) (camSpeed * Gdx.graphics.getDeltaTime());
-    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
       camera.translate(-displacement, 0, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
       camera.translate(displacement, 0, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
       camera.translate(0, displacement, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+      adjustZoom(0.02f);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+      adjustZoom(-0.02f);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
       if (Gdx.input.isKeyPressed(Input.Keys.X)) {
@@ -307,11 +316,13 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.SPACE:
         paused ^= true;
         break;
+      case Input.Keys.LEFT:
       case Input.Keys.MINUS:
         if (gameSpeed > 0.125) {
           gameSpeed /= 2.0f;
         }
         break;
+      case Input.Keys.RIGHT:
       case Input.Keys.EQUALS:
         gameSpeed *= 2.0f;
         break;
@@ -453,6 +464,12 @@ public class Main extends InputAdapter implements ApplicationListener {
     return false;
   }
 
+  @Override
+  public boolean scrolled(float amountX, float amountY) {
+    adjustZoom(amountY * 0.02f);
+    return false;
+  }
+
   public void centerCamera(Charge charge) {
     Vector2 pos = charge.getScreenPos();
     centerCamera(pos.x, pos.y);
@@ -478,5 +495,11 @@ public class Main extends InputAdapter implements ApplicationListener {
     Vector2 screenPos = viewport.project(Pos.cpy());
     return (-10 < screenPos.x && screenPos.x < viewport.getScreenWidth() + 10)
         && (-10 < screenPos.y && screenPos.y < viewport.getScreenHeight() + 10);
+  }
+
+  private void adjustZoom(float delta) {
+    if (camera.zoom > 0.1 || delta > 0) {
+      camera.zoom += delta;
+    }
   }
 }
