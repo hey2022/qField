@@ -263,7 +263,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     charge.update(charges, timeStep);
     checkpoints.check(charge);
     if (gameMode == GameMode.GAME) {
-      if (checkpoints.allChecked()) {
+      if (checkpoints.allCompleted()) {
         finished = true;
         paused = true;
       }
