@@ -33,6 +33,13 @@ public class Level {
         checkpointPos.add(new Vector2(200, 500));
         checkpointPos.add(new Vector2(700, 500));
         break;
+      case 5:
+        cameraPos = new Vector2(0, 0);
+        checkpointPos.add(new Vector2(100, 100));
+        checkpointPos.add(new Vector2(-100, 100));
+        checkpointPos.add(new Vector2(100, -100));
+        checkpointPos.add(new Vector2(-100, -100));
+        break;
       default:
         cameraPos = new Vector2(350, 350);
         for (int i = 0; i < levelNum; i++) {
