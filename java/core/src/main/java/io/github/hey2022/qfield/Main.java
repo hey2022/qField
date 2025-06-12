@@ -291,8 +291,8 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
       adjustZoom(-1.0f * dt);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-      if (Gdx.input.isKeyPressed(Input.Keys.X) && !(gameMode == GameMode.GAME && started)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !(gameMode == GameMode.GAME && started)) {
+      if (Gdx.input.isKeyPressed(Input.Keys.X)) {
         delete();
       } else if (inputMode == InputMode.CHARGE && Gdx.input.isTouched()) {
         {
@@ -389,6 +389,13 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.NUM_3:
         toggleGameMode(3);
         break;
+      case Input.Keys.NUM_4:
+        toggleGameMode(4);
+        break;
+      default:
+        if (Input.Keys.NUM_5 <= keycode && keycode <= Input.Keys.NUM_9) {
+          toggleGameMode(keycode - Input.Keys.NUM_0);
+        }
     }
     return false;
   }
@@ -409,6 +416,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   void gameInit(int levelNum) {
+    gameMode = GameMode.SANDBOX;
     clear();
     gameMode = GameMode.GAME;
     started = false;
@@ -475,7 +483,9 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   public void clear() {
     charges = new Array<Charge>();
-    checkpoints = new Checkpoints();
+    if (gameMode != GameMode.GAME) {
+      checkpoints = new Checkpoints();
+    }
     reset();
   }
 
