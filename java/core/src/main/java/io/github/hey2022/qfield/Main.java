@@ -364,6 +364,10 @@ public class Main extends InputAdapter implements ApplicationListener {
         reset();
         break;
       case Input.Keys.C:
+        if (gameMode == GameMode.GAME) {
+          gameInit(level.levelNum);
+          break;
+        }
         clear();
         break;
       case Input.Keys.I:
@@ -416,7 +420,6 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   void gameInit(int levelNum) {
-    gameMode = GameMode.SANDBOX;
     clear();
     gameMode = GameMode.GAME;
     started = false;
@@ -483,9 +486,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   public void clear() {
     charges = new Array<Charge>();
-    if (gameMode != GameMode.GAME) {
-      checkpoints = new Checkpoints();
-    }
+    checkpoints = new Checkpoints();
     reset();
   }
 
