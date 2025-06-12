@@ -70,7 +70,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   InputMode inputMode;
   GameMode gameMode;
-  int level;
+  Level level;
 
   @Override
   public void create() {
@@ -364,7 +364,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         reset();
         break;
       case Input.Keys.C:
-        clear(inputMode);
+        clear();
         break;
       case Input.Keys.I:
         charge.drawArrow ^= true;
@@ -386,43 +386,41 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.NUM_2:
         toggleGameMode(2);
         break;
+      case Input.Keys.NUM_3:
+        toggleGameMode(3);
+        break;
     }
     return false;
   }
 
-  void toggleGameMode(int level) {
-    clear(InputMode.CHECKPOINT);
-    clear(InputMode.CHARGE);
+  void toggleGameMode(int levelNum) {
     switch (gameMode) {
       case SANDBOX:
-        gameMode = GameMode.GAME;
-        gameInit(level);
+        gameInit(levelNum);
         break;
       case GAME:
-        if (level != this.level) {
-          this.level = level;
-          gameInit(level);
+        if (levelNum != this.level.levelNum) {
+          gameInit(levelNum);
         } else {
-          gameMode = GameMode.SANDBOX;
+          gameExit();
         }
         break;
     }
   }
 
-  void gameInit(int level) {
+  void gameInit(int levelNum) {
+    clear();
+    gameMode = GameMode.GAME;
     started = false;
-    switch (level) {
-      case 1:
-        centerCamera(200, 200);
-        checkpoints.add(new Vector2(400, 400), 30, true);
-        break;
-      case 2:
-        centerCamera(300, 300);
-        checkpoints.add(new Vector2(300, 300), 30, true);
-        checkpoints.add(new Vector2(600, 400), 30, true);
-        break;
-        // Add more levels as needed
-    }
+    finished = false;
+    level = new Level(levelNum, checkpoints);
+    reset();
+  }
+
+  void gameExit() {
+    gameMode = GameMode.SANDBOX;
+    level = null;
+    clear();
   }
 
   void toggleInputMode() {
@@ -446,7 +444,11 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   public void reset() {
     charge.reset(initalPos.x, initalPos.y);
-    // centerCamera(charge);
+    if (gameMode == GameMode.SANDBOX) {
+      centerCamera(charge);
+    } else if (gameMode == GameMode.GAME) {
+      centerCamera(level.getCameraPos());
+    }
     paused = true;
     started = false;
     checkpoints.reset();
@@ -471,15 +473,9 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
   }
 
-  public void clear(InputMode mode) {
-    switch (mode) {
-      case CHARGE:
-        charges = new Array<Charge>();
-        break;
-      case CHECKPOINT:
-        checkpoints = new Checkpoints();
-        break;
-    }
+  public void clear() {
+    charges = new Array<Charge>();
+    checkpoints = new Checkpoints();
     reset();
   }
 
@@ -553,6 +549,10 @@ public class Main extends InputAdapter implements ApplicationListener {
   public void centerCamera(float x, float y) {
     camera.position.set(x, y, camera.position.z);
     camera.update();
+  }
+
+  public void centerCamera(Vector2 pos) {
+    centerCamera(pos.x, pos.y);
   }
 
   public void addCharge(float x, float y, float charge, boolean fixed, float mass) {
