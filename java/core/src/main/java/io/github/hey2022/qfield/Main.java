@@ -70,6 +70,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   InputMode inputMode;
   GameMode gameMode;
+  int level;
 
   @Override
   public void create() {
@@ -381,6 +382,10 @@ public class Main extends InputAdapter implements ApplicationListener {
         break;
       case Input.Keys.NUM_1:
         toggleGameMode(1);
+        break;
+      case Input.Keys.NUM_2:
+        toggleGameMode(2);
+        break;
     }
     return false;
   }
@@ -394,7 +399,12 @@ public class Main extends InputAdapter implements ApplicationListener {
         gameInit(level);
         break;
       case GAME:
-        gameMode = GameMode.SANDBOX;
+        if (level != this.level) {
+          this.level = level;
+          gameInit(level);
+        } else {
+          gameMode = GameMode.SANDBOX;
+        }
         break;
     }
   }
@@ -405,6 +415,11 @@ public class Main extends InputAdapter implements ApplicationListener {
       case 1:
         centerCamera(200, 200);
         checkpoints.add(new Vector2(400, 400), 30, true);
+        break;
+      case 2:
+        centerCamera(300, 300);
+        checkpoints.add(new Vector2(300, 300), 30, true);
+        checkpoints.add(new Vector2(600, 400), 30, true);
         break;
         // Add more levels as needed
     }
