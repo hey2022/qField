@@ -462,6 +462,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
     paused = true;
     started = false;
+    finished = false;
     checkpoints.reset();
   }
 
