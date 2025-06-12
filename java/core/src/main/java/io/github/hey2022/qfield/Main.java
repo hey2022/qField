@@ -291,7 +291,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
       adjustZoom(-1.0f * dt);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !(gameMode == GameMode.GAME && started)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && isPrep()) {
       if (Gdx.input.isKeyPressed(Input.Keys.X)) {
         delete();
       } else if (inputMode == InputMode.CHARGE && Gdx.input.isTouched()) {
@@ -383,7 +383,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         toggleInputMode();
         break;
       case Input.Keys.X:
-        if (Gdx.input.isKeyPressed(Input.Keys.X) && !(gameMode == GameMode.GAME && started)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.X) && isPrep()) {
           delete();
         }
         break;
@@ -393,6 +393,10 @@ public class Main extends InputAdapter implements ApplicationListener {
         }
     }
     return false;
+  }
+
+  boolean isPrep() {
+    return !(gameMode == GameMode.GAME && started);
   }
 
   void toggleGameMode(int levelNum) {
@@ -484,8 +488,8 @@ public class Main extends InputAdapter implements ApplicationListener {
 
   @Override
   public boolean touchDown(int x, int y, int pointer, int button) {
-    if (gameMode == GameMode.GAME && started) {
-      return false; // Do not allow interaction in game mode after started
+    if (!isPrep()) {
+      return false;
     }
     touchPos.set(x, y);
     viewport.unproject(touchPos);
