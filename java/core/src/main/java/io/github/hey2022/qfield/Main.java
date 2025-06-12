@@ -339,6 +339,9 @@ public class Main extends InputAdapter implements ApplicationListener {
         Gdx.app.exit();
         break;
       case Input.Keys.SPACE:
+        if (finished) {
+          break;
+        }
         paused ^= true;
         started = true;
         break;
