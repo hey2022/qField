@@ -384,20 +384,8 @@ public class Main extends InputAdapter implements ApplicationListener {
           delete();
         }
         break;
-      case Input.Keys.NUM_1:
-        toggleGameMode(1);
-        break;
-      case Input.Keys.NUM_2:
-        toggleGameMode(2);
-        break;
-      case Input.Keys.NUM_3:
-        toggleGameMode(3);
-        break;
-      case Input.Keys.NUM_4:
-        toggleGameMode(4);
-        break;
       default:
-        if (Input.Keys.NUM_5 <= keycode && keycode <= Input.Keys.NUM_9) {
+        if (Input.Keys.NUM_1 <= keycode && keycode <= Input.Keys.NUM_9) {
           toggleGameMode(keycode - Input.Keys.NUM_0);
         }
     }
