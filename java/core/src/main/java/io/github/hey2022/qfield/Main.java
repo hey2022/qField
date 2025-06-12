@@ -377,6 +377,9 @@ public class Main extends InputAdapter implements ApplicationListener {
         charge.drawArrow ^= true;
         break;
       case Input.Keys.P:
+        if (gameMode == GameMode.GAME) {
+          break;
+        }
         checkpoints.add(cursorPos, 30, false);
         break;
       case Input.Keys.G:
@@ -417,6 +420,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   void gameInit(int levelNum) {
     clear();
     gameMode = GameMode.GAME;
+    inputMode = InputMode.CHARGE;
     started = false;
     finished = false;
     level = new Level(levelNum, checkpoints);
