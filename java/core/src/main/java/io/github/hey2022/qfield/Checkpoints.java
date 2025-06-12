@@ -17,7 +17,7 @@ public class Checkpoints {
     return checkpoints.size;
   }
 
-  public boolean allChecked() {
+  public boolean allCompleted() {
     return activeCheckpoints.size == 0;
   }
 
