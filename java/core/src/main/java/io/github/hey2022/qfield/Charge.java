@@ -48,6 +48,7 @@ public class Charge {
   private Path path;
   private boolean selected;
   public Circle circle;
+  public boolean drawArrow = true;
 
   public Charge(float x, float y, float charge, boolean fixed, float mass) {
     this.mass = mass * this.PROTON_MASS;
@@ -166,11 +167,13 @@ public class Charge {
   public void draw(ShapeDrawer drawer) {
     if (!fixed) {
       path.drawPath(drawer);
-      Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
-      Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
+      if (drawArrow) {
+        Vector2 end = screenPosition.cpy().mulAdd(velocity, 1e-6f / Main.SCALE);
+        Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.BLUE);
 
-      end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
-      Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
+        end = screenPosition.cpy().mulAdd(force, 1e15f / Main.SCALE);
+        Draw.drawArrow(drawer, screenPosition.cpy(), end.cpy(), Color.RED);
+      }
     }
 
     Color tempColor = color.cpy();

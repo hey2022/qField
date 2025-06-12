@@ -331,6 +331,9 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.C:
         clear();
         break;
+      case Input.Keys.I:
+        charge.drawArrow ^= true;
+        break;
       case Input.Keys.P:
         checkpoints.add(cursorPos, 30);
         break;
