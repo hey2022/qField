@@ -31,13 +31,14 @@ public class Draw {
 
   public static void drawTargetArrow(
       ShapeDrawer drawer,
+      OrthographicCamera hudCamera,
       OrthographicCamera camera,
       Vector2 end,
       float radius,
       float central_angle,
       Color color) {
-    float hw = camera.viewportWidth / 2;
-    float hh = camera.viewportHeight / 2;
+    float hw = camera.zoom * camera.viewportWidth / 2;
+    float hh = camera.zoom * camera.viewportHeight / 2;
     Vector2 start = new Vector2(camera.position.x, camera.position.y);
     if ((start.x - hw <= end.x && end.x <= start.x + hw)
         && (start.y - hh <= end.y && end.y <= start.y + hh)) {
@@ -47,7 +48,9 @@ public class Draw {
     float xt = Math.abs(hw / (end.x - start.x));
     float yt = Math.abs(hh / (end.y - start.y));
     float min_t = Math.min(xt, yt);
-    Vector2 intersect = start.cpy().mulAdd(direction, min_t);
+    Vector2 hudPos = new Vector2(hudCamera.position.x, hudCamera.position.y);
+    Vector2 intersect =
+        start.cpy().mulAdd(direction, min_t).sub(start).scl(1.0f / camera.zoom).add(hudPos);
     float angle = (float) Math.atan2(start.y - end.y, start.x - end.x);
     drawer.sector(
         intersect.x, intersect.y, radius, angle - central_angle / 2, central_angle, color, color);

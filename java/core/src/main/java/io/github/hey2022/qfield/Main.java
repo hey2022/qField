@@ -42,6 +42,7 @@ public class Main extends InputAdapter implements ApplicationListener {
   private BitmapFont font;
   private TextureRegion region;
   private ShapeDrawer drawer;
+  private ShapeDrawer hudDrawer;
   private DecimalFormat df = new DecimalFormat("0.000E0");
 
   private Array<Charge> charges;
@@ -78,6 +79,7 @@ public class Main extends InputAdapter implements ApplicationListener {
       pixmap.dispose();
       region = new TextureRegion(texture, 0, 0, 1, 1);
       drawer = new ShapeDrawer(batch, region);
+      hudDrawer = new ShapeDrawer(hudBatch, region);
     }
 
     camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -146,9 +148,6 @@ public class Main extends InputAdapter implements ApplicationListener {
       if (inCamera(q.getScreenPos())) q.draw(drawer);
     }
     charge.draw(drawer);
-
-    Draw.drawTargetArrow(
-        drawer, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
     batch.end();
     drawHud();
   }
@@ -176,6 +175,10 @@ public class Main extends InputAdapter implements ApplicationListener {
     hudCamera.update();
     hudBatch.setProjectionMatrix(hudCamera.combined);
     hudBatch.begin();
+    hudDrawer.update();
+    Draw.drawTargetArrow(
+        hudDrawer, hudCamera, camera, charge.getScreenPos(), 25, (float) Math.PI / 4, Color.BLACK);
+
     font.setColor(Color.BLACK);
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
