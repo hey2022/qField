@@ -247,7 +247,8 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   private void input() {
-    float displacement = (float) (camSpeed * Gdx.graphics.getDeltaTime());
+    float dt = Gdx.graphics.getDeltaTime();
+    float displacement = (float) (camSpeed * dt);
     if (Gdx.input.isKeyPressed(Input.Keys.A)) {
       camera.translate(-displacement, 0, 0);
     }
@@ -261,10 +262,10 @@ public class Main extends InputAdapter implements ApplicationListener {
       camera.translate(0, -displacement, 0);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
-      adjustZoom(0.02f);
+      adjustZoom(1.0f * dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
-      adjustZoom(-0.02f);
+      adjustZoom(-1.0f * dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
       if (Gdx.input.isKeyPressed(Input.Keys.X)) {
