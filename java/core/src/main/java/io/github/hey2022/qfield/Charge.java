@@ -42,6 +42,7 @@ public class Charge {
   private Vector2 acceleration;
   private Vector2 velocity;
   private float mass;
+  private float distanceTraveled;
   private boolean fixed;
   private Color color;
   private float charge;
@@ -67,6 +68,7 @@ public class Charge {
     acceleration = new Vector2(0, 0);
     force = new Vector2(0, 0);
     path = new Path(PATH_LENGTH);
+    distanceTraveled = 0.0f;
   }
 
   public void applyForce(Vector2 force) {
@@ -83,7 +85,9 @@ public class Charge {
     for (int i = 0; i < 8; i++) {
       updateForce(charges);
       velocity.add(acceleration.cpy().scl(timeStep * d[i]));
-      position.add(velocity.cpy().scl(timeStep * c[i]));
+      Vector2 ds = velocity.cpy().scl(timeStep * c[i]);
+      position.add(ds);
+      distanceTraveled += ds.len();
     }
     screenPosition = position.cpy().scl(1 / Main.SCALE);
     circle.setPosition(screenPosition);
@@ -181,5 +185,9 @@ public class Charge {
       tempColor.mul(SELECTED_LIGHT_FACTOR);
     }
     drawer.filledCircle(screenPosition, RADIUS, tempColor);
+  }
+
+  public float getDistanceTraveled() {
+    return distanceTraveled;
   }
 }
