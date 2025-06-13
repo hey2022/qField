@@ -247,7 +247,8 @@ public class Main extends InputAdapter implements ApplicationListener {
   }
 
   private void input() {
-    float displacement = (float) (camSpeed * Gdx.graphics.getDeltaTime());
+    float dt = Gdx.graphics.getDeltaTime();
+    float displacement = (float) (camSpeed * dt);
     if (Gdx.input.isKeyPressed(Input.Keys.A)) {
       camera.translate(-displacement, 0, 0);
     }
@@ -260,11 +261,11 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.S)) {
       camera.translate(0, -displacement, 0);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-      adjustZoom(0.02f);
+    if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
+      adjustZoom(1.0f * dt);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-      adjustZoom(-0.02f);
+    if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
+      adjustZoom(-1.0f * dt);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
       if (Gdx.input.isKeyPressed(Input.Keys.X)) {
@@ -316,18 +317,16 @@ public class Main extends InputAdapter implements ApplicationListener {
       case Input.Keys.SPACE:
         paused ^= true;
         break;
-      case Input.Keys.LEFT:
-      case Input.Keys.MINUS:
+      case Input.Keys.DOWN:
         if (gameSpeed > 0.125) {
           gameSpeed /= 2.0f;
         }
         break;
-      case Input.Keys.RIGHT:
-      case Input.Keys.EQUALS:
+      case Input.Keys.UP:
         gameSpeed *= 2.0f;
         break;
       case Input.Keys.NUM_0:
-        gameSpeed = 1.0f;
+        camera.zoom = 1.0f;
         break;
       case Input.Keys.F:
         cameraFollow ^= true;
