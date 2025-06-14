@@ -212,6 +212,8 @@ public class Main extends InputAdapter implements ApplicationListener {
           "Game Status: " + (finished ? "Finished" : (paused ? "Paused" : "Running")),
           10,
           hudCamera.viewportHeight - 110);
+
+      font.draw(hudBatch, "Game Score: " + getScore(), 10, hudCamera.viewportHeight - 130);
     }
 
     font.draw(
@@ -587,5 +589,17 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (camera.zoom > 0.1 || delta > 0) {
       camera.zoom += delta;
     }
+  }
+
+  public int getScore() {
+    if (checkpoints.empty()) {
+      return 0;
+    }
+    return (int)
+        Math.max(
+            1000
+                - 100 * Math.max(Math.log(charge.getDistanceTraveled() / SCALE / 1000), 0)
+                - Math.max(charges.size - checkpoints.checkpoints(), 0) * 10,
+            0);
   }
 }
