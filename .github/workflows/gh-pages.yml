@@ -33,6 +33,7 @@ jobs:
       - name: Build HTML Project
         run: |
           cd java
+          ./gradlew html:clean
           ./gradlew html:dist
       - name: Setup Pages
         uses: actions/configure-pages@v5
