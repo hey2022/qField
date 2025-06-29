@@ -29,4 +29,5 @@
   <collapse-property name="user.agent" values="*"/>
   <!-- Remove the "user.agent" lines above if you encounter issues with Safari or other Gecko browsers. -->
   <inherits name="space.earlygrey.shapedrawer"/>
+  <inherits name="formic"/>
 </module>

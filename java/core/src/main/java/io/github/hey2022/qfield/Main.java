@@ -21,8 +21,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import java.text.DecimalFormat;
 import space.earlygrey.shapedrawer.ShapeDrawer;
+import text.formic.Stringf;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends InputAdapter implements ApplicationListener {
@@ -43,7 +43,6 @@ public class Main extends InputAdapter implements ApplicationListener {
   private TextureRegion region;
   private ShapeDrawer drawer;
   private ShapeDrawer hudDrawer;
-  private DecimalFormat df = new DecimalFormat("0.000E0");
 
   private Array<Charge> charges;
   private Charge charge;
@@ -194,7 +193,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     font.draw(
         hudBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, hudCamera.viewportHeight - 10);
     font.draw(
-        hudBatch, String.format("Game speed: %.3f", gameSpeed), 10, hudCamera.viewportHeight - 30);
+        hudBatch, Stringf.format("Game speed: %.3f", gameSpeed), 10, hudCamera.viewportHeight - 30);
     font.draw(hudBatch, "Charges: " + charges.size, 10, hudCamera.viewportHeight - 50);
     font.draw(
         hudBatch,
@@ -218,7 +217,7 @@ public class Main extends InputAdapter implements ApplicationListener {
 
     font.draw(
         hudBatch,
-        String.format("Total energy: %s J", df.format(charge.energy(charges))),
+        Stringf.format("Total energy: %.3e J", charge.energy(charges)),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 10,
         0,
@@ -226,7 +225,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         false);
     font.draw(
         hudBatch,
-        String.format("Kinetic energy: %s J", df.format(charge.kineticEnergy())),
+        Stringf.format("Kinetic energy: %.3e J", charge.kineticEnergy()),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 30,
         0,
@@ -234,7 +233,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         false);
     font.draw(
         hudBatch,
-        String.format("Potential energy: %s J", df.format(charge.electricPotential(charges))),
+        Stringf.format("Potential energy: %.3e J", charge.electricPotential(charges)),
         hudCamera.viewportWidth - 10,
         hudCamera.viewportHeight - 50,
         0,
@@ -243,7 +242,7 @@ public class Main extends InputAdapter implements ApplicationListener {
     Vector2 position = charge.getPos();
     font.draw(
         hudBatch,
-        String.format("Position: (%s m, %s m)", df.format(position.x), df.format(position.y)),
+        Stringf.format("Position: (%.3e m, %.3e m)", position.x, position.y),
         hudCamera.viewportWidth - 10,
         15,
         0,

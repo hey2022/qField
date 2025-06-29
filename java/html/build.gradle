@@ -36,8 +36,9 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
   implementation "space.earlygrey:shapedrawer:$shapedrawerVersion:sources"
-  implementation project(':core')
+  api 'com.github.tommyettinger:formic:0.1.5:sources'
 
+  implementation project(':core')
 }
 
 import org.akhikhl.gretty.AppBeforeIntegrationTestTask
