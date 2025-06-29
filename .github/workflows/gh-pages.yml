@@ -34,7 +34,7 @@ jobs:
         run: |
           cd java
           ./gradlew html:clean
-          ./gradlew html:dist
+          ./gradlew --no-build-cache html:dist
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
