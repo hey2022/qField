@@ -292,7 +292,10 @@ public class Main extends InputAdapter implements ApplicationListener {
     if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
       adjustZoom(-1.0f * dt);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && isPrep()) {
+    // SHIFT_LEFT is deprecated
+    if ((Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
+            || Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+        && isPrep()) {
       if (Gdx.input.isKeyPressed(Input.Keys.X)) {
         delete();
       } else if (inputMode == InputMode.CHARGE && Gdx.input.isTouched()) {
