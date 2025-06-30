@@ -18,6 +18,7 @@ trained for playing the game.
 - C: Clear all charges & checkpoints.
 - R: Reset free charge to origin.
 - I: Toggle force and velocity arrows
+- P: Toggle charge path
 - UP: Increase game speed.
 - DOWN: Decrease game speed.
 - SPACE: Start/Pause game.

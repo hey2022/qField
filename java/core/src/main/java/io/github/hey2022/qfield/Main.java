@@ -378,10 +378,7 @@ public class Main extends InputAdapter implements ApplicationListener {
         charge.drawArrow ^= true;
         break;
       case Input.Keys.P:
-        if (gameMode == GameMode.GAME) {
-          break;
-        }
-        checkpoints.add(cursorPos, 30, false);
+        charge.drawPath ^= true;
         break;
       case Input.Keys.G:
         toggleInputMode();
