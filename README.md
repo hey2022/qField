@@ -2,6 +2,7 @@
 
 It is a picturesque electric charge simulation inspired by
 [electric-hockey](https://phet.colorado.edu/en/simulations/electric-hockey).
+You can play it [online](https://hey2022.github.io/qField/).
 
 In addition to the game, a reinforcement learning (RL) model is planned to be trained on the game.
 
