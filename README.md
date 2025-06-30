@@ -5,6 +5,9 @@ It is a picturesque electric charge simulation inspired by
 
 In addition to the game, a reinforcement learning (RL) model is planned to be trained on the game.
 
+## Demo
+[![qField](https://img.youtube.com/vi/l5Vjn7yWPfQ/0.jpg)](https://www.youtube.com/watch?v=l5Vjn7yWPfQ "qField")
+
 ## Game keybinds
 
 ### Game controls
