@@ -11,6 +11,10 @@ In addition to the game, a reinforcement learning (RL) model is planned to be tr
 
 ## Game keybinds
 
+> [!IMPORTANT]
+> [In Firefox, if you hold down the `shift` key while right-clicking, then the context menu is shown without the contextmenu event being fired.](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event#canceling_the_contextmenu_event)
+> This prevents us from preventing the context menu from appearing when shift right-clicking, a workaround is to set `dom.event.contextmenu.shift_suppresses_event` to `false` in `about:config`.
+
 ### Game controls
 
 - G: Switch between charge and checkpoint mode.
