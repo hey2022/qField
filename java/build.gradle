@@ -14,6 +14,10 @@ buildscript {
   }
 }
 
+plugins {
+  id "com.github.ben-manes.versions" version "0.52.0"
+}
+
 allprojects {
   apply plugin: 'eclipse'
   apply plugin: 'idea'
@@ -25,7 +29,7 @@ allprojects {
     }
   }
   ext {
-    shapedrawerVersion = '2.5.0'
+    shapedrawerVersion = '2.6.0'
   }
   repositories {
     maven { url 'https://jitpack.io' }
