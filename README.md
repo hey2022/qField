@@ -33,13 +33,13 @@ In addition to the game, a reinforcement learning (RL) model is planned to be tr
 
 ### Charge mode controls
 
-- (control) Left click: (repeatedly) Add positive charge.
+- (shift) Left click: (repeatedly) Add positive charge.
 - Middle click: Move free charge to cursor.
-- (control) Right click: (repeatedly) Add negative charge.
-- (control) X: (repeatedly) Delete selected charge under cursor.
+- (shift) Right click: (repeatedly) Add negative charge.
+- (shift) X: (repeatedly) Delete selected charge under cursor.
 
 ### Checkpoint mode controls
 
 - Left click: Add checkpoint.
 - Click and drag: Add checkpoint and adjust size.
-- (control) X: (repeatedly) Delete selected checkpoint under cursor.
+- (shift) X: (repeatedly) Delete selected checkpoint under cursor.
