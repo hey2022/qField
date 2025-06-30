@@ -29,7 +29,7 @@ allprojects {
     }
   }
   ext {
-    shapedrawerVersion = '2.5.0'
+    shapedrawerVersion = '2.6.0'
   }
   repositories {
     maven { url 'https://jitpack.io' }
