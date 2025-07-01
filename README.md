@@ -11,6 +11,10 @@ In addition to the game, a reinforcement learning (RL) model is planned to be tr
 
 ## Game keybinds
 
+> [!IMPORTANT]
+> [In Firefox, if you hold down the `shift` key while right-clicking, then the context menu is shown without the contextmenu event being fired.](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event#canceling_the_contextmenu_event)
+> This prevents us from preventing the context menu from appearing when shift right-clicking, a workaround is to set `dom.event.contextmenu.shift_suppresses_event` to `false` in `about:config`.
+
 ### Game controls
 
 - G: Switch between charge and checkpoint mode.
@@ -33,13 +37,13 @@ In addition to the game, a reinforcement learning (RL) model is planned to be tr
 
 ### Charge mode controls
 
-- (control) Left click: (repeatedly) Add positive charge.
+- (shift) Left click: (repeatedly) Add positive charge.
 - Middle click: Move free charge to cursor.
-- (control) Right click: (repeatedly) Add negative charge.
-- (control) X: (repeatedly) Delete selected charge under cursor.
+- (shift) Right click: (repeatedly) Add negative charge.
+- (shift) X: (repeatedly) Delete selected charge under cursor.
 
 ### Checkpoint mode controls
 
 - Left click: Add checkpoint.
 - Click and drag: Add checkpoint and adjust size.
-- (control) X: (repeatedly) Delete selected checkpoint under cursor.
+- (shift) X: (repeatedly) Delete selected checkpoint under cursor.
