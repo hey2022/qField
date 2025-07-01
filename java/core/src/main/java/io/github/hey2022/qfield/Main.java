@@ -212,7 +212,11 @@ public class Main extends InputAdapter implements ApplicationListener {
           10,
           hudCamera.viewportHeight - 110);
 
-      font.draw(hudBatch, "Game Score: " + getScore(), 10, hudCamera.viewportHeight - 130);
+      font.draw(
+          hudBatch,
+          Stringf.format("Game Score: %.3f", getScore()),
+          10,
+          hudCamera.viewportHeight - 130);
     }
 
     font.draw(
@@ -587,11 +591,11 @@ public class Main extends InputAdapter implements ApplicationListener {
     }
   }
 
-  public int getScore() {
+  public float getScore() {
     if (checkpoints.empty()) {
       return 0;
     }
-    return (int)
+    return (float)
         Math.max(
             1000
                 - 100 * Math.max(Math.log(charge.getDistanceTraveled() / SCALE / 1000), 0)
