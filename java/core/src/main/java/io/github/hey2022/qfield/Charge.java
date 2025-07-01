@@ -83,13 +83,13 @@ public class Charge {
 
   public void update(Array<Charge> charges, float timeStep) {
     if (fixed) return;
+    Vector2 initialPosition = position.cpy();
     for (int i = 0; i < 8; i++) {
       updateForce(charges);
       velocity.add(acceleration.cpy().scl(timeStep * d[i]));
-      Vector2 ds = velocity.cpy().scl(timeStep * c[i]);
-      position.add(ds);
-      distanceTraveled += ds.len();
+      position.add(velocity.cpy().scl(timeStep * c[i]));
     }
+    distanceTraveled += initialPosition.sub(position).len();
     screenPosition = position.cpy().scl(1 / Main.SCALE);
     circle.setPosition(screenPosition);
     path.add(screenPosition);
